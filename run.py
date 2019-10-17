@@ -1,0 +1,41 @@
+import configparser
+import glob
+import os
+from util.core import data
+from discord.ext import commands
+
+config = configparser.ConfigParser()
+token = configparser.ConfigParser()
+config.read("config.cfg")
+token.read("token.cfg")
+os.system("cls")
+
+
+class Alexi(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix=data.get_prefix,
+                         description=config["UTILITY"]["description"],
+                         help_attrs=dict(hidden=True))
+        for extension in glob.glob("extensions/*.py"):
+            print("Started loading the " + (extension.replace("extensions\\", "")).capitalize()[:-3] + " extension!")
+            self.load_extension(extension.replace("\\", ".")[:-3])
+            print("Loaded the " + (extension.replace("extensions\\", "")).capitalize()[:-3] + " extension!")
+
+    async def on_ready(self):
+        print('\n*-* *-* *-* *-* *-* *-* *-* *-*')
+        print('*-* Logged in as:           *-*')
+        print(f'*-* Name: {self.user.name}#{self.user.discriminator}        *-*')
+        print(f'*-* ID: {self.user.id}  *-*')
+        print('*-* *-* *-* *-* *-* *-* *-* *-*\n')
+
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+        await self.process_commands(message)
+
+    def run(self):
+        super().run(token["SECRET"]["token"], reconnect=True)
+
+
+if __name__ == '__main__':
+    Alexi().run()

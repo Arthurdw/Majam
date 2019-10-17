@@ -63,7 +63,6 @@ def add_command(server_id: int, author, name: str, response: str):
     return command_info.fetchall()
 
 
-
 def edit_command(name: str, response: str):
     pass
 
