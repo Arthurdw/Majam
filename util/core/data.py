@@ -39,8 +39,8 @@ def get_prefix(bot, message):
                                                                                 '<@634141001769943090>',
                                                                                 '<@!634141001769943090>']
     if not message.guild:
-        return commands.when_mentioned_or(*output)(bot, message)
-    return commands.when_mentioned_or(*get(bot, message, output))(bot, message)
+        return output
+    return get(bot, message, output)
 
 
 ###################
