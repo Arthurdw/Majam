@@ -16,17 +16,19 @@ class Alexi(commands.Bot):
         super().__init__(command_prefix=data.get_prefix,
                          description=config["UTILITY"]["description"],
                          help_attrs=dict(hidden=True))
+        print("\\/\\/\\/\\/\\/ EXTENSIONS \\/\\/\\/\\/\\/")
         for extension in glob.glob("extensions/*.py"):
-            print("Started loading the " + (extension.replace("extensions\\", "")).capitalize()[:-3] + " extension!")
+            print(extension.replace("extensions\\", "")[:-3] + ": Starting")
             self.load_extension(extension.replace("\\", ".")[:-3])
-            print("Loaded the " + (extension.replace("extensions\\", "")).capitalize()[:-3] + " extension!")
+            print(extension.replace("extensions\\", "")[:-3] + ": Ready")
+        print("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\")
 
     async def on_ready(self):
-        print('\n*-* *-* *-* *-* *-* *-* *-* *-*')
-        print('*-* Logged in as:           *-*')
-        print(f'*-* Name: {self.user.name}#{self.user.discriminator}        *-*')
-        print(f'*-* ID: {self.user.id}  *-*')
-        print('*-* *-* *-* *-* *-* *-* *-* *-*\n')
+        print('\n*-* *-* *-* *-*  *-* *-* *-* *-*')
+        print('*-* Logged in as:            *-*')
+        print(f'*-* Name: {self.user.name}#{self.user.discriminator}         *-*')
+        print(f'*-* ID: {self.user.id}   *-*')
+        print('*-* *-* *-* *-*  *-* *-* *-* *-*\n')
 
     async def on_message(self, message):
         if message.author.bot:
