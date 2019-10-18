@@ -13,10 +13,11 @@ class Main(commands.Cog):
         """Prefix related commands"""
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         await ctx.send(**em("Please use a valid sub-command."
-                            f"\nSee the `{prefix}help` command!\nCurrent prefix: {prefix} or just mention me!"))
+                            f"\nSee the `{prefix}help prefix` command!\nCurrent prefix: {prefix} or just mention me!"))
 
     @prefix.command(name="set")
     async def set(self, ctx, *, prefix):
+        """Add/Set your custom prefix"""
         if len(prefix) >= 10:
             await ctx.send(**em(content="The prefix shouldn't exceed 10 characters!"))
             return
