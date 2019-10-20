@@ -1,6 +1,7 @@
 import discord
 import configparser
 import datetime
+import random
 from util.embed_types import message_types as types
 
 
@@ -9,7 +10,8 @@ def embed_message(content=None, title=None, type_=None, footer=True,
     embed_title, embed_content, embed_icon, embed_color = types.get(type_)
     title = title or embed_title
     color = color or embed_color
-    embed = discord.Embed(title=title, color=color, description=embed_content.format(emb_content=content))
+    embed = discord.Embed(title=title, color=color or discord.Color(random.randint(0, 16581375)),
+                          description=embed_content.format(emb_content=content))
     if image is not None:
         embed.set_image(url=image)
     if footer:

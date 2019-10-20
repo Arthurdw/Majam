@@ -1,9 +1,10 @@
 import configparser
 import glob
 import os
-from util.core import data
+from util.core import data, formatter
 from discord.ext import commands
 
+em = formatter.embed_message
 config = configparser.ConfigParser()
 token = configparser.ConfigParser()
 config.read("config.cfg")

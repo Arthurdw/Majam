@@ -1,5 +1,5 @@
 from discord.ext import commands
-from util.core import data, formatter
+from util.core import data, formatter, checks
 
 em = formatter.embed_message
 
@@ -8,12 +8,21 @@ class Main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def default(self, ctx):
+        prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
+        return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
+
+    @checks.management()
+    @commands.group(name="dev", invoke_without_command=True)
+    async def development(self, ctx):
+        """All bot dev commands!"""
+        await ctx.send(**em(Main.default(self, ctx)))
+
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):
         """Prefix related commands"""
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
-        await ctx.send(**em("Please use a valid sub-command."
-                            f"\nSee the `{prefix}help prefix` command!\nCurrent prefix: {prefix} or just mention me!"))
+        await ctx.send(**em(Main.default(self, ctx) + f"\nCurrent prefix: `{prefix}` or just mention me!"))
 
     @prefix.command(name="set")
     async def set(self, ctx, *, prefix):
