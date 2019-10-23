@@ -9,7 +9,7 @@ def embed_message(content=None, title=None, type_=None, footer=True,
                   color=None, footer_icon=None, footer_message=None, image=None):
     embed_title, embed_content, embed_icon, embed_color = types.get(type_)
     title = title or embed_title
-    color = color or embed_color
+    color = color or embed_color or discord.Color(int(hex(random.randint(0, 16581375)), 0))
     embed = discord.Embed(title=title, color=color or discord.Color(random.randint(0, 16581375)),
                           description=embed_content.format(emb_content=content))
     if image is not None:
