@@ -35,7 +35,7 @@ class Main(commands.Cog):
             embed.timestamp = datetime.datetime.now()
             await ctx.send(embed=embed)
         else:
-            embed = formatter.embed_message(content=f"Currently running on old version: `{version}`"
+            embed = formatter.embed_message(content=f"Currently running on old version: `{version}`\n"
                                                     f"Latest version: `{latest}`",
                                             footer=False)["embed"]
             embed.set_footer(
