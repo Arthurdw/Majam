@@ -68,7 +68,26 @@ def get_command(server_id: int, command_name):
         cursor.execute("SELECT * FROM servers")
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
-    db_output = cursor.execute(f"SELECT prefix FROM servers WHERE server_id = {server_id} AND name = {command_name}")
+    try:
+        db_output = cursor.execute(f"SELECT * FROM servers WHERE server_id = {server_id} AND name = {command_name}")
+    except sqlite3.OperationalError:
+        connect.commit()
+        connect.close()
+        return None
+    connect.commit()
+    connect.close()
+    return db_output
+
+
+def get_response(server_id: int, command_name):
+    """Gets a command response from the database!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
+    db_output = cursor.execute(f"SELECT response FROM servers WHERE server_id = {server_id} AND name = {command_name}")
     connect.commit()
     connect.close()
     return db_output

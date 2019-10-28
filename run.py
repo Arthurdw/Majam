@@ -3,6 +3,7 @@ import glob
 import os
 from util.core import data, formatter
 from discord.ext import commands
+from util.core import GitHub
 
 em = formatter.embed_message
 config = configparser.ConfigParser()
@@ -30,6 +31,7 @@ class Alexi(commands.Bot):
         print('*-* Logged in as:            *-*')
         print(f'*-* Name: {self.user.name}#{self.user.discriminator}         *-*')
         print(f'*-* ID: {self.user.id}   *-*')
+        print(f'*-* Version: {GitHub.version()}        *-*')
         print('*-* *-* *-* *-*  *-* *-* *-* *-*\n')
 
     async def on_message(self, message):

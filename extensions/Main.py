@@ -1,7 +1,12 @@
+import datetime
+import configparser
 from discord.ext import commands
-from util.core import data, formatter, checks
+from util.core import data, formatter, checks, GitHub
 
+config = configparser.ConfigParser()
+config.read("config.cfg")
 em = formatter.embed_message
+version = GitHub.version()
 
 
 class Main(commands.Cog):
@@ -17,6 +22,15 @@ class Main(commands.Cog):
     async def development(self, ctx):
         """All bot dev commands!"""
         await ctx.send(**em(self.default(ctx)))
+
+    @development.command(name='version')
+    async def version(self, ctx):
+        embed = formatter.embed_message(content=f"Currently running on version: \n`{version}`", footer=False)["embed"]
+        embed.set_footer(
+            text=(config["UTILITY"]["default_footer_message"])[1:-8],
+            icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
+        embed.timestamp = datetime.datetime.now()
+        await ctx.send(embed=embed)
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):

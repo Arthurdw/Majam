@@ -27,17 +27,31 @@ class CustomCommands(commands.Cog):
         ⇒ !foo
         ⇐ bar"""
         if command is None:
-            await ctx.send(**em(content="Please provide a command name and a response!\n"
+            await ctx.send(**em(content="Please provide a command *name* and a *response*!\n"
                                         "For more information you can check out the "
-                                        f"[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
         elif 'return' not in str(command).lower().split(' '):
-            await ctx.send(**em(content="Please use the correct syntax to add a command.\n"
+            await ctx.send(**em(content="Please use the correct *syntax* to add a command.\n"
                                         "For more information you can check out the "
-                                        f"[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
         else:
-            name = str(command).lower()
-        # elif data.get_command(ctx.message.guild.id):
-        #     pass
+            name, response = str(command).lower().split("return")
+            if data.get_command(ctx.message.guild.id, name) is None:
+                if len(str(name).strip()) > 10:
+                    char = 'characters'
+                    if len(str(name).strip())-10 == 1:
+                        char = 'character'
+                    await ctx.send(**em(type_="error",
+                                        content="You can't create a command name that is more than `10` characters!\n"
+                                                f"`{name}` is `{len(str(name).strip())}` characters!\n"
+                                                f"That's `{len(str(name).strip())-10}` {char} to much!"))
+                else:
+                    pass
+            else:
+                await ctx.send(**em(type_="error",
+                                    content=f"This command already exists. (`{name}`)\n"
+                                            f"```\n{data.get_response(ctx.message.guild.id, name)}\n```\n"
+                                            "Please give the command another name!"))
 
 
 def setup(bot):
