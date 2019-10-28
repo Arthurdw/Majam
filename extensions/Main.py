@@ -25,6 +25,7 @@ class Main(commands.Cog):
 
     @development.command(name='version')
     async def version(self, ctx):
+        """Retrieve the latest bot version. (and the current one)"""
         latest = GitHub.version()
         if version == latest:
             embed = formatter.embed_message(content=f"Currently running on version: \n`{version}`",
@@ -51,17 +52,22 @@ class Main(commands.Cog):
         await ctx.send(**em(self.default(ctx) + f"\nCurrent prefix: `{prefix}` or just mention me!"))
 
     @prefix.command(name="set")
-    async def set(self, ctx, *, prefix):
+    async def set(self, ctx, *, prefix=None):
         """Add/Set your custom prefix"""
-        if len(prefix) >= 10:
-            await ctx.send(**em(content="The prefix shouldn't exceed 10 characters!"))
+        if prefix is None:
+            await ctx.send(**em(self.default(ctx)))
+            return
+        if len(prefix) > 1:
+            await ctx.send(**em(type_="error",
+                                content="The prefix shouldn't exceed 1 character!"))
             return
         try:
             data.set_prefix(ctx.message.guild.id, ctx.message.author.id, prefix)
             await ctx.send(**em(content=f"Successfully set the server prefix to `{prefix}`"))
         except Exception as e:
             print(e)
-            await ctx.send(**em(content="Oh an error occurred, this shouldn't happen please contact the "
+            await ctx.send(**em(type_="error",
+                                content="Oh an error occurred, this shouldn't happen please contact the "
                                         "core developer `Arthur#0002`!\n"
                                         f"Exception type: `{type(e).__name__}`\n"
                                         f"Arguments: \n```\n{e.args}\n```"))

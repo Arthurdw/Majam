@@ -5,6 +5,9 @@ import datetime
 commandConfig = configparser.ConfigParser()
 commandConfig.read('config.cfg')
 
+# TODO:
+#     Optimize DB executes
+
 #################
 # CUSTOM PREFIX #
 #################
@@ -51,6 +54,7 @@ def set_prefix(server_id, author, prefix):
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, prefix text)")
     parameters = (datetime.datetime.now(), server_id, author, prefix)
+    cursor.execute(f"DELETE FROM servers WHERE server_id = {server_id}")
     cursor.execute("INSERT INTO servers VALUES (?, ?, ?, ?)", parameters)
     connect.commit()
     connect.close()
