@@ -1,6 +1,9 @@
+import configparser
 from discord.ext import commands
 from util.core import data, formatter
 
+config = configparser.ConfigParser()
+config.read("config.cfg")
 em = formatter.embed_message
 
 
@@ -14,7 +17,27 @@ class CustomCommands(commands.Cog):
 
     @commands.group(name="command", invoke_without_command=True)
     async def command(self, ctx):
-        CustomCommands.default(self, ctx)
+        """Commands group command!"""
+        await ctx.send(**em(self.default(ctx)))
+
+    @command.command(name="add")
+    async def add(self, ctx, *, command=None):
+        """Add a custom command!
+        ⇒ !command add foo return bar
+        ⇒ !foo
+        ⇐ bar"""
+        if command is None:
+            await ctx.send(**em(content="Please provide a command name and a response!\n"
+                                        "For more information you can check out the "
+                                        f"[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+        elif 'return' not in str(command).lower().split(' '):
+            await ctx.send(**em(content="Please use the correct syntax to add a command.\n"
+                                        "For more information you can check out the "
+                                        f"[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+        else:
+            name = str(command).lower()
+        # elif data.get_command(ctx.message.guild.id):
+        #     pass
 
 
 def setup(bot):

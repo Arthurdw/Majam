@@ -16,6 +16,7 @@ class Alexi(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=data.get_prefix,
                          description=config["UTILITY"]["description"],
+                         case_insensitive=True,
                          help_attrs=dict(hidden=True))
         print("\\/\\/\\/\\/\\/ EXTENSIONS \\/\\/\\/\\/\\/")
         for extension in glob.glob("extensions/*.py"):

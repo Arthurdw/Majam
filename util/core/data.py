@@ -60,6 +60,19 @@ def set_prefix(server_id, author, prefix):
 # CUSTOM COMMANDS #
 ###################
 
+def get_command(server_id: int, command_name):
+    """Gets a command from the database!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
+    db_output = cursor.execute(f"SELECT prefix FROM servers WHERE server_id = {server_id} AND name = {command_name}")
+    connect.commit()
+    connect.close()
+    return db_output
+
 
 def add_command(server_id: int, author, name: str, response: str):
     """Add a custom command in the database."""

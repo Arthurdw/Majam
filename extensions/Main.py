@@ -16,13 +16,13 @@ class Main(commands.Cog):
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
         """All bot dev commands!"""
-        await ctx.send(**em(Main.default(self, ctx)))
+        await ctx.send(**em(self.default(ctx)))
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):
         """Prefix related commands"""
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
-        await ctx.send(**em(Main.default(self, ctx) + f"\nCurrent prefix: `{prefix}` or just mention me!"))
+        await ctx.send(**em(self.default(ctx) + f"\nCurrent prefix: `{prefix}` or just mention me!"))
 
     @prefix.command(name="set")
     async def set(self, ctx, *, prefix):
