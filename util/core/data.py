@@ -8,6 +8,20 @@ commandConfig.read('config.cfg')
 # TODO:
 #     Optimize DB executes
 
+#######################
+# GENERAL DB COMMANDS #
+#######################
+
+
+def fetch_all(database: str):
+    connect = sqlite3.connect(database)
+    cursor = connect.cursor()
+    command = cursor.execute("SELECT * FROM servers")
+    fetch = command.fetchall()
+    connect.commit()
+    connect.close()
+    return fetch
+
 #################
 # CUSTOM PREFIX #
 #################
@@ -64,7 +78,7 @@ def set_prefix(server_id, author, prefix):
 # CUSTOM COMMANDS #
 ###################
 
-def get_command(server_id: int, command_name):
+def get_command(server_id: int, command_name: str):
     """Gets a command from the database!"""
     connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
     cursor = connect.cursor()
@@ -73,17 +87,30 @@ def get_command(server_id: int, command_name):
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
     try:
-        db_output = cursor.execute(f"SELECT * FROM servers WHERE server_id = {server_id} AND name = {command_name}")
-    except sqlite3.OperationalError:
+        db_output = cursor.execute(f"SELECT * FROM servers WHERE server_id = {server_id} AND name = '{command_name}'")
+        fetch = db_output.fetchall()
+    except sqlite3.OperationalError as e:
+        print(e)
         connect.commit()
         connect.close()
         return None
     connect.commit()
     connect.close()
-    return db_output
+    return fetch
 
 
-def get_response(server_id: int, command_name):
+def commands(server_id: int):
+    """Gets all command names from a server!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
+    cursor = connect.cursor()
+    command = cursor.execute(f"SELECT name FROM servers WHERE server_id = {server_id}")
+    fetch = command.fetchall()
+    connect.commit()
+    connect.close()
+    return fetch
+
+
+def get_response(server_id: int, command_name: str):
     """Gets a command response from the database!"""
     connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
     cursor = connect.cursor()
@@ -91,10 +118,15 @@ def get_response(server_id: int, command_name):
         cursor.execute("SELECT * FROM servers")
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
-    db_output = cursor.execute(f"SELECT response FROM servers WHERE server_id = {server_id} AND name = {command_name}")
+    db_output = cursor.execute(f"SELECT response FROM servers WHERE server_id = {server_id} "
+                               f"AND name = '{command_name}'")
+    out = db_output.fetchall()
     connect.commit()
     connect.close()
-    return db_output
+    output = 'Hmm, this text is here?\nHow did this happen?\nIDK, something failed internally.\n ╮ (. ❛ ᴗ ❛.) ╭'
+    for item in out:
+        output = item[0]
+    return output
 
 
 def add_command(server_id: int, author, name: str, response: str):
@@ -105,17 +137,36 @@ def add_command(server_id: int, author, name: str, response: str):
         cursor.execute("SELECT * FROM servers")
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
-    parameters = (datetime.datetime.now(), server_id, author, name, response)
+    parameters = (datetime.datetime.now(), server_id, author, name.strip().lower(), response.strip())
     command_info = cursor.execute("INSERT INTO servers VALUES (?, ?, ?, ?, ?)", parameters)
+    output = command_info.fetchall()
     connect.commit()
     connect.close()
-    return command_info.fetchall()
+    return output
 
 
-def edit_command(name: str, response: str):
-    pass
+def edit_command(server_id: int, name: str, new_name: str, response: str):
+    """Edits a custom command!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, prefix text)")
+    cursor.execute(f"UPDATE servers SET name = '{new_name}', response = '{response}' WHERE server_id = {server_id} AND "
+                   f"name = '{name}'")
+    connect.commit()
+    connect.close()
 
 
-def remove_command(name: str):
-    pass
-
+def remove_command(server_id: int, name: str):
+    """Removes a custom command!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, prefix text)")
+    cursor.execute(f"DELETE FROM servers WHERE server_id = {server_id} AND name = '{name}'")
+    connect.commit()
+    connect.close()

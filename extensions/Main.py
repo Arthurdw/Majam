@@ -17,7 +17,6 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
-    @checks.management()
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
         """All bot dev commands!"""
@@ -44,6 +43,23 @@ class Main(commands.Cog):
                 icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
             embed.timestamp = datetime.datetime.now()
             await ctx.send(embed=embed)
+
+    @checks.management()
+    @development.command(name="fetch")
+    async def fetch(self, ctx, database):
+        """Fetch all data from a database of choice!"""
+        fetched = data.fetch_all('db/' + database + '.db')
+        _type = type(fetched)
+        sub_type = None
+        for item in fetched:
+            sub_type = type(item)
+            break
+        if len(fetched) > 1900:
+            fetched = str(fetched[1900:]) + '...'
+        await ctx.send(**em(title="Fetch information:",
+                            content=f"Type: `{_type}`\n"
+                                    f"SubType: `{sub_type}\n`"
+                                    f"Fetch: ```\n{fetched}\n```"))
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):

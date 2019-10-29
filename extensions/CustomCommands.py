@@ -20,6 +20,87 @@ class CustomCommands(commands.Cog):
         """Commands group command!"""
         await ctx.send(**em(self.default(ctx)))
 
+    @command.command(name='list')
+    async def list(self, ctx):
+        """Retrieves all the available server commands!"""
+        pass
+
+    @command.command(name="info")
+    async def info(self, ctx, command=None):
+        """Retrieves information about a command!
+        (Creation date, server, creator, name, raw response, response)"""
+        pass
+
+    @command.command(name="edit")
+    async def edit(self, ctx, *, command=None):
+        """Edits a command!
+        This can not be undone!
+
+        PRO TIP: to make small changes use the 'commands info' command to get the raw data!"""
+        if command is None:
+            await ctx.send(**em(type_="error",
+                                content="Please provide a command that I should remove!\n"
+                                        "For more information you can check out the "
+                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+        elif 'return' not in str(command).lower().split(' '):
+            await ctx.send(**em(type_="error",
+                                content="Please use the correct *syntax* to remove a command.\n"
+                                        "For more information you can check out the "
+                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+        else:
+            items = str(command).lower().split(" ")
+            if 'to' in items:
+                try:
+                    name, after_to = str(command).lower().split("to")
+                    name, after_to = str(name).strip(), str(after_to).strip()
+                    new_name, response = after_to.split('return')
+                    new_name, response = str(new_name).strip(), str(response).strip()
+                except ValueError:
+                    _name = str(command).lower().split("to")
+                    name = _name[0].strip()
+                    _after_to = command[len(_name[0] + 'to'):]
+                    after_to = str(_after_to).strip()
+                    sliced = after_to.split('return')
+                    new_name = sliced[0].strip()
+                    response = after_to[len(sliced[0] + 'return'):]
+                data.edit_command(ctx.guild.id, name, new_name, response)
+                await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
+                                            f"Changed the name from `{name}` to `{new_name}`!\n"
+                                            f"The new output will be this:\n```\n{response}\n```"))
+            else:
+                try:
+                    name, response = str(command).lower().split("return")
+                    name, response = str(name).strip(), str(response).strip()
+                except ValueError:
+                    _name = str(command).lower().split("return")
+                    name = _name[0].strip()
+                    _response = command[len(_name[0] + 'return'):]
+                    response = _response.strip()
+                data.edit_command(ctx.guild.id, name, name, response)
+                await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
+                                            f"The new output will be this:\n```\n{response}\n```"))
+
+    @command.command(name="remove")
+    async def remove(self, ctx, *, command=None):
+        """Permanently removes a command!
+        This can not be undone!"""
+        if command is None:
+            await ctx.send(**em(type_="error",
+                                content="Please provide a command that I should remove!\n"
+                                        "For more information you can check out the "
+                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+        else:
+            name = str(command).lower().strip()
+            if data.get_command(ctx.message.guild.id, name) is None or \
+                    data.get_command(ctx.message.guild.id, name) == []:
+                await ctx.send(**em(type_="error",
+                                    content=f"This command doesnt exist. (`{name}`)\n"
+                                            "Please give right the command name!"))
+            else:
+                data.remove_command(ctx.guild.id, name)
+                await ctx.send(**em(content=f"Successfully removed the command: `{name}`.\n"
+                                            f"This was requested by: {ctx.author.mention}"))
+
     @command.command(name="add")
     async def add(self, ctx, *, command=None):
         """Add a custom command!
@@ -27,16 +108,29 @@ class CustomCommands(commands.Cog):
         ⇒ !foo
         ⇐ bar"""
         if command is None:
-            await ctx.send(**em(content="Please provide a command *name* and a *response*!\n"
+            await ctx.send(**em(type_="error",
+                                content="Please provide a command *name* and a *response*!\n"
                                         "For more information you can check out the "
                                         f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
         elif 'return' not in str(command).lower().split(' '):
-            await ctx.send(**em(content="Please use the correct *syntax* to add a command.\n"
+            await ctx.send(**em(type_="error",
+                                content="Please use the correct *syntax* to add a command.\n"
                                         "For more information you can check out the "
                                         f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
         else:
-            name, response = str(command).lower().split("return")
-            if data.get_command(ctx.message.guild.id, name) is None:
+            try:
+                name, response = str(command).lower().split("return")
+                name, response = str(name).strip(), str(response).strip()
+            except ValueError:
+                _name = str(command).lower().split("return")
+                name = _name[0].strip()
+                _response = command[len(_name[0] + 'return'):]
+                response = _response.strip()
+            if response == "":
+                await ctx.send(**em(type_="error",
+                                    content="You need to give me a response!"))
+            elif data.get_command(ctx.message.guild.id, name) is None or\
+                    data.get_command(ctx.message.guild.id, name) == []:
                 if len(str(name).strip()) > 10:
                     char = 'characters'
                     if len(str(name).strip())-10 == 1:
@@ -46,12 +140,24 @@ class CustomCommands(commands.Cog):
                                                 f"`{name}` is `{len(str(name).strip())}` characters!\n"
                                                 f"That's `{len(str(name).strip())-10}` {char} to much!"))
                 else:
-                    pass
+                    data.add_command(ctx.message.guild.id, ctx.message.author.id, name, response)
+                    await ctx.send(**em(content="Successfully created a command with the following specifications:\n"
+                                                f"Name: `{name}`\n"
+                                                f"Response: `{response}`"))
             else:
                 await ctx.send(**em(type_="error",
                                     content=f"This command already exists. (`{name}`)\n"
+                                            "Command Response:\n"
                                             f"```\n{data.get_response(ctx.message.guild.id, name)}\n```\n"
                                             "Please give the command another name!"))
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandNotFound):
+            for item in data.commands(ctx.guild.id):
+                command = str(ctx.invoked_with).lower().strip()
+                if command in item:
+                    await ctx.send(**em(data.get_response(ctx.guild.id, command)))
 
 
 def setup(bot):
