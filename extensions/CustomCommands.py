@@ -1,4 +1,5 @@
 import configparser
+import datetime
 from discord import utils
 from discord.ext import commands
 from util.core import data, formatter
@@ -7,6 +8,7 @@ config = configparser.ConfigParser()
 config.read("config.cfg")
 em = formatter.embed_message
 
+
 class CustomCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -14,6 +16,18 @@ class CustomCommands(commands.Cog):
     def default(self, ctx):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
+
+    @staticmethod
+    def parse_command(command):
+        try:
+            name, response = str(command).lower().split("return")
+            name, response = str(name).strip(), str(response).strip()
+        except ValueError:
+            _name = str(command).lower().split("return")
+            name = _name[0].strip()
+            _response = command[len(_name[0] + 'return'):]
+            response = _response.strip()
+        return [name, response]
 
     @staticmethod
     def parsed(ctx):
@@ -34,7 +48,22 @@ class CustomCommands(commands.Cog):
     async def info(self, ctx, command=None):
         """Retrieves information about a command!
         (Creation date, server, creator, name, raw response, response)"""
-        pass
+        cmd_info = data.command_info(ctx.guild.id, command)
+        extra = ""
+        if len(command) < 11:
+            extra = f"\nCreate it using `{utils.escape_mentions(ctx.prefix)}command add " \
+                    f"{command} return My amazing command!`"
+        if not cmd_info:
+            await ctx.send(**em(content=f"This server doesnt have this custom command right now!{extra}"))
+        else:
+            raw_creation_date = datetime.datetime.strptime(cmd_info[0][0], '%Y-%m-%d %H:%M:%S.%f')
+            guild = self.bot.get_guild(cmd_info[0][1])
+            await ctx.send(**em(title="Command information:",
+                                content=f"Creation Date: `{formatter.convert_time(raw_creation_date)}`\n"
+                                        f"Command: `{cmd_info[0][3]}`\n"
+                                        f"Author: <@{cmd_info[0][2]}>\n"
+                                        f"Guild: `{guild.name}`\n"
+                                        f"Raw response: `{cmd_info[0][4]}`\n"))
 
     @commands.guild_only()
     @command.command(name='list')
@@ -98,14 +127,7 @@ class CustomCommands(commands.Cog):
                                             f"Changed the name from `{name}` to `{new_name}`!\n"
                                             f"The new output will be this:\n```\n{response}\n```"))
             else:
-                try:
-                    name, response = str(command).lower().split("return")
-                    name, response = str(name).strip(), str(response).strip()
-                except ValueError:
-                    _name = str(command).lower().split("return")
-                    name = _name[0].strip()
-                    _response = command[len(_name[0] + 'return'):]
-                    response = _response.strip()
+                name, response = CustomCommands.parse_command(command)
                 data.edit_command(ctx.guild.id, name, name, response)
                 await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
                                             f"The new output will be this:\n```\n{response}\n```"))
@@ -157,14 +179,7 @@ class CustomCommands(commands.Cog):
                                         "For more information you can check out the "
                                         f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
         else:
-            try:
-                name, response = str(command).lower().split("return")
-                name, response = str(name).strip(), str(response).strip()
-            except ValueError:
-                _name = str(command).lower().split("return")
-                name = _name[0].strip()
-                _response = command[len(_name[0] + 'return'):]
-                response = _response.strip()
+            name, response = CustomCommands.parse_command(command)
             if response == "":
                 await ctx.send(**em(type_="error",
                                     content="You need to give me a response!"))

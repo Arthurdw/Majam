@@ -170,3 +170,13 @@ def remove_command(server_id: int, name: str):
     cursor.execute(f"DELETE FROM servers WHERE server_id = {server_id} AND name = '{name}'")
     connect.commit()
     connect.close()
+
+
+def command_info(server_id: int, name: str):
+    connect = sqlite3.connect(commandConfig["DATABASE"]["commandsDB"])
+    cursor = connect.cursor()
+    command = cursor.execute(f"SELECT * FROM servers WHERE server_id = {server_id} AND name = '{name}'")
+    fetch = command.fetchall()
+    connect.commit()
+    connect.close()
+    return fetch
