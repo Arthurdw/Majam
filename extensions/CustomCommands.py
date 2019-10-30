@@ -1,4 +1,5 @@
 import configparser
+from discord import utils
 from discord.ext import commands
 from util.core import data, formatter
 
@@ -15,29 +16,51 @@ class CustomCommands(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
+    @commands.guild_only()
     @commands.group(name="command", invoke_without_command=True)
     async def command(self, ctx):
         """Commands group command!"""
         await ctx.send(**em(self.default(ctx)))
 
-    @command.command(name='list')
-    async def list(self, ctx):
-        """Retrieves all the available server commands!"""
-        pass
-
-    @command.command(name="info")
+    @commands.guild_only()
+    @command.command(name="info", aliases=["about"])
     async def info(self, ctx, command=None):
         """Retrieves information about a command!
         (Creation date, server, creator, name, raw response, response)"""
         pass
 
-    @command.command(name="edit")
+    @commands.guild_only()
+    @command.command(name='list')
+    async def list(self, ctx):
+        """Retrieves all the available server commands!"""
+        _commands = data.commands(ctx.guild.id)
+        if not _commands:
+            await ctx.send(**em(content="This server doesn't have any custom commands right now!\n"
+                                        f"Create some using `{utils.escape_mentions(ctx.prefix)}command add`"))
+        else:
+            command_list = ", "
+            temp_tuple = ()
+            final_tuple = ()
+            for command in _commands:
+                temp_tuple += ("`" + command + "`",)
+            for item in temp_tuple:
+                final_tuple += ("`" + item + "`",)
+            _command_list = command_list.join(final_tuple)
+            await ctx.send(**em(content="These are all the server commands!\n"
+                                        "You can get more information for each command using"
+                                        f"`{utils.escape_mentions(ctx.prefix)}command info`\nCommands: {_command_list}"))
+
+    @commands.guild_only()
+    @command.command(name="edit", aliases=["change"])
     async def edit(self, ctx, *, command=None):
         """Edits a command!
         This can not be undone!
 
         PRO TIP: to make small changes use the 'commands info' command to get the raw data!"""
-        if command is None:
+        if not ctx.author.guild_permissions.administrator:
+            await ctx.send(**em(type_="error",
+                                content="You need to have at least administrator permission to edit a custom command!"))
+        elif command is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
@@ -80,11 +103,16 @@ class CustomCommands(commands.Cog):
                 await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
                                             f"The new output will be this:\n```\n{response}\n```"))
 
-    @command.command(name="remove")
+    @commands.guild_only()
+    @command.command(name="remove", aliases=["delete", "del"])
     async def remove(self, ctx, *, command=None):
         """Permanently removes a command!
         This can not be undone!"""
-        if command is None:
+        if not ctx.author.guild_permissions.administrator:
+            await ctx.send(**em(type_="error",
+                                content="You need to have at least administrator permission to remove a custom "
+                                        "command!"))
+        elif command is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
@@ -101,13 +129,17 @@ class CustomCommands(commands.Cog):
                 await ctx.send(**em(content=f"Successfully removed the command: `{name}`.\n"
                                             f"This was requested by: {ctx.author.mention}"))
 
-    @command.command(name="add")
+    @commands.guild_only()
+    @command.command(name="add", aliases=["create"])
     async def add(self, ctx, *, command=None):
         """Add a custom command!
         ⇒ !command add foo return bar
         ⇒ !foo
         ⇐ bar"""
-        if command is None:
+        if not ctx.author.guild_permissions.administrator:
+            await ctx.send(**em(type_="error",
+                                content="You need to have at least administrator permission to add a custom command!"))
+        elif command is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a command *name* and a *response*!\n"
                                         "For more information you can check out the "
@@ -151,6 +183,7 @@ class CustomCommands(commands.Cog):
                                             f"```\n{data.get_response(ctx.message.guild.id, name)}\n```\n"
                                             "Please give the command another name!"))
 
+    @commands.guild_only()
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
