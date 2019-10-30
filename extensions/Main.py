@@ -21,6 +21,12 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
+    @commands.command(name="docs", aliases=["documentation"])
+    async def docs(self, ctx):
+        """Retrieve the link to the documentation!"""
+        await ctx.send(**em(content=f"Check out the __**[Official Alexi Docs]({config['DOCS']['customCommands']} "
+                                    f"\"Alexi Documentation\")**__."))
+
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
         """All bot dev commands!"""
