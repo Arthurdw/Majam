@@ -1,5 +1,9 @@
 import datetime
 import configparser
+import json
+import discord
+import re
+from discord import utils
 from discord.ext import commands
 from util.core import data, formatter, checks, GitHub
 
@@ -16,6 +20,12 @@ class Main(commands.Cog):
     def default(self, ctx):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
+
+    @staticmethod
+    def url(string):
+        ur = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', string)
+        url_list = str(ur[0]).split(" ")
+        return url_list
 
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
@@ -60,6 +70,29 @@ class Main(commands.Cog):
                             content=f"Type: `{_type}`\n"
                                     f"SubType: `{sub_type}\n`"
                                     f"Fetch: ```\n{fetched}\n```"))
+
+    @commands.command(name="say")
+    async def say(self, ctx, *, content=None):
+        """Embeds a message, you can customize these embeds fully!"""
+        async def send_message(_content):
+            if (str(_content).strip())[:1] == "{" and (str(_content).strip())[-1:] == "}":
+                contents = json.loads(_content)
+                embed = discord.Embed.from_dict(contents)
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send(**em(content))
+        if content is None:
+            await ctx.send(**em(type_="error",
+                                content="You need to provide something that I can embed!",
+                                title="Missing parameter!"))
+        else:
+            if ctx.author.guild_permissions.administrator:
+                await send_message(content)
+            else:
+                for url in Main.url(content):
+                    content = str(content).replace(url, "`REMOVED LINK`")
+                content = utils.escape_mentions(content)
+                await send_message(content)
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):

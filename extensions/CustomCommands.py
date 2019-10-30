@@ -19,22 +19,34 @@ class CustomCommands(commands.Cog):
 
     @staticmethod
     def parse_command(command):
-        try:
-            name, response = str(command).lower().split("return")
-            name, response = str(name).strip(), str(response).strip()
-        except ValueError:
-            _name = str(command).lower().split("return")
-            name = _name[0].strip()
-            _response = command[len(_name[0] + 'return'):]
-            response = _response.strip()
+        _name = str(command).lower().split("return")
+        name = _name[0].strip()
+        _response = command[len(_name[0] + 'return'):]
+        response = _response.strip()
         return [name, response]
 
     @staticmethod
     def parsed(ctx):
+        operators = [("author", f"{ctx.author.name}#{ctx.author.discriminator}"),
+                     ("author.name", ctx.author.name),
+                     ("author.discriminator", ctx.author.discriminator),
+                     ("author.id", ctx.author.id),
+                     ("author.nickname", ctx.author.display_name),
+                     ("author.bot", ctx.author.bot),
+                     ("author.color", "#" + str(hex(ctx.author.color.value))[-2:]),
+                     ("author.created", formatter.convert_time(ctx.author.created_at)),
+                     ("author.avatar",
+                      f"https://cdn.discordapp.com/avatars/{ctx.author.id}/{ctx.author.avatar_url}.webp?size=1024"),
+                     ("author.default_avatar",
+                      f"https://cdn.discordapp.com/embed/avatars/{str(int(ctx.author.discriminator) % 5)}.png"),
+                     ("author.avatar_animated", ctx.author.is_avatar_animated()),
+                     ("author.mention", ctx.author.mention)]
         for item in data.commands(ctx.guild.id):
             command = str(ctx.invoked_with).lower().strip()
             if command in item:
                 parsed_data = data.get_response(ctx.guild.id, command)
+                for operator in operators:
+                    parsed_data = parsed_data.replace("{" + str(operator[0]) + "}", str(operator[1]))
                 return parsed_data
 
     @commands.guild_only()
@@ -100,12 +112,12 @@ class CustomCommands(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
-                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
         elif 'return' not in str(command).lower().split(' '):
             await ctx.send(**em(type_="error",
                                 content="Please use the correct *syntax* to remove a command.\n"
                                         "For more information you can check out the "
-                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
         else:
             items = str(command).lower().split(" ")
             if 'to' in items:
@@ -145,7 +157,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
-                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
         else:
             name = str(command).lower().strip()
             if data.get_command(ctx.message.guild.id, name) is None or \
@@ -172,12 +184,12 @@ class CustomCommands(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="Please provide a command *name* and a *response*!\n"
                                         "For more information you can check out the "
-                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
         elif 'return' not in str(command).lower().split(' '):
             await ctx.send(**em(type_="error",
                                 content="Please use the correct *syntax* to add a command.\n"
                                         "For more information you can check out the "
-                                        f"[__**docs**__]({config['DOCS']['customCommands']} \"Alexi Documentation\")."))
+                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
         else:
             name, response = CustomCommands.parse_command(command)
             if response == "":
