@@ -33,7 +33,9 @@ class CustomCommands(commands.Cog):
                      ("author.id", ctx.author.id),
                      ("author.nickname", ctx.author.display_name),
                      ("author.bot", ctx.author.bot),
-                     ("author.color", "#" + str(hex(ctx.author.color.value))[-2:]),
+                     ("author.color", f"#{str(hex(ctx.author.color.r))[-2:]}"
+                                      f"{str(hex(ctx.author.color.g))[-2:]}"
+                                      f"{str(hex(ctx.author.color.b))[-2:]}"),
                      ("author.created", formatter.convert_time(ctx.author.created_at)),
                      ("author.avatar",
                       f"https://cdn.discordapp.com/avatars/{ctx.author.id}/{ctx.author.avatar_url}.webp?size=1024"),
