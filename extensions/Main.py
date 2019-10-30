@@ -86,7 +86,7 @@ class Main(commands.Cog):
                                 content="You need to provide something that I can embed!",
                                 title="Missing parameter!"))
         else:
-            if not ctx.author.guild_permissions.administrator:
+            if ctx.author.guild_permissions.administrator:
                 await send_message(content)
             else:
                 content = str(content).replace('@everyone', 'everyone').replace('@here', 'here')
