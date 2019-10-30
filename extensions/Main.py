@@ -21,12 +21,6 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
-    @staticmethod
-    def url(string):
-        ur = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', string)
-        url_list = str(ur[0]).split(" ")
-        return url_list
-
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
         """All bot dev commands!"""
@@ -86,12 +80,10 @@ class Main(commands.Cog):
                                 content="You need to provide something that I can embed!",
                                 title="Missing parameter!"))
         else:
-            if ctx.author.guild_permissions.administrator:
+            if not ctx.author.guild_permissions.administrator:
                 await send_message(content)
             else:
-                for url in Main.url(content):
-                    content = str(content).replace(url, "`REMOVED LINK`")
-                content = utils.escape_mentions(content)
+                content = str(content).replace('@everyone', 'everyone').replace('@here', 'here')
                 await send_message(content)
 
     @commands.group(name="prefix", invoke_without_command=True)
