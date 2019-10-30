@@ -7,7 +7,6 @@ config = configparser.ConfigParser()
 config.read("config.cfg")
 em = formatter.embed_message
 
-
 class CustomCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,8 +15,16 @@ class CustomCommands(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
+    @staticmethod
+    def parsed(ctx):
+        for item in data.commands(ctx.guild.id):
+            command = str(ctx.invoked_with).lower().strip()
+            if command in item:
+                parsed_data = data.get_response(ctx.guild.id, command)
+                return parsed_data
+
     @commands.guild_only()
-    @commands.group(name="command", invoke_without_command=True)
+    @commands.group(name="command", aliases=["cmd"], invoke_without_command=True)
     async def command(self, ctx):
         """Commands group command!"""
         await ctx.send(**em(self.default(ctx)))
@@ -42,7 +49,7 @@ class CustomCommands(commands.Cog):
             temp_tuple = ()
             final_tuple = ()
             for command in _commands:
-                temp_tuple += ("`" + command + "`",)
+                temp_tuple += command
             for item in temp_tuple:
                 final_tuple += ("`" + item + "`",)
             _command_list = command_list.join(final_tuple)
@@ -187,10 +194,7 @@ class CustomCommands(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
-            for item in data.commands(ctx.guild.id):
-                command = str(ctx.invoked_with).lower().strip()
-                if command in item:
-                    await ctx.send(**em(data.get_response(ctx.guild.id, command)))
+            await ctx.send(**em(CustomCommands.parsed(ctx)))
 
 
 def setup(bot):
