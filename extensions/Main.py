@@ -64,8 +64,8 @@ class Main(commands.Cog):
     @development.command(name="update")
     async def update(self, ctx):
         """Updates the bot version."""
-        old_version = Main.version
         global version
+        old_version = version
         version = GitHub.version()
         if version == old_version:
             await ctx.send(**em(content=f"Already running on the latest version!"))
