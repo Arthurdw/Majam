@@ -223,7 +223,9 @@ class CustomCommands(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
-            await ctx.send(**em(CustomCommands.parsed(ctx)))
+            output = CustomCommands.parsed(ctx)
+            if output is not None:
+                await ctx.send(**em(output))
 
 
 def setup(bot):
