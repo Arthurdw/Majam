@@ -27,6 +27,13 @@ class Main(commands.Cog):
         await ctx.send(**em(content=f"Check out the __**[Official Alexi Docs]({config['DOCS']['customCommands']} "
                                     f"\"Alexi Documentation\")**__."))
 
+    @commands.command(name="invite")
+    async def docs(self, ctx):
+        """Retrieve the link to the documentation!"""
+        await ctx.send(**em(content="Invite __**[Alexi](https://discordapp.com/api/oauth2/authorize?"
+                                    "client_id=634141001769943090&permissions=8&scope=bot "
+                                    "\"Invite me please :D\")**__"))
+
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
         """All bot dev commands!"""
@@ -101,23 +108,27 @@ class Main(commands.Cog):
     @prefix.command(name="set")
     async def set(self, ctx, *, prefix=None):
         """Add/Set your custom prefix"""
-        if prefix is None:
+        if not ctx.author.guild_permissions.administrator:
+            await ctx.send(**em(type_="error",
+                                content="You need to have at least administrator permission to edit a custom command!"))
+        elif prefix is None:
             await ctx.send(**em(self.default(ctx)))
             return
-        if len(prefix) > 1:
+        elif len(prefix) > 1:
             await ctx.send(**em(type_="error",
                                 content="The prefix shouldn't exceed 1 character!"))
             return
-        try:
-            data.set_prefix(ctx.message.guild.id, ctx.message.author.id, prefix)
-            await ctx.send(**em(content=f"Successfully set the server prefix to `{prefix}`"))
-        except Exception as e:
-            print(e)
-            await ctx.send(**em(type_="error",
-                                content="Oh an error occurred, this shouldn't happen please contact the "
-                                        "core developer `Arthur#0002`!\n"
-                                        f"Exception type: `{type(e).__name__}`\n"
-                                        f"Arguments: \n```\n{e.args}\n```"))
+        else:
+            try:
+                data.set_prefix(ctx.message.guild.id, ctx.message.author.id, prefix)
+                await ctx.send(**em(content=f"Successfully set the server prefix to `{prefix}`"))
+            except Exception as e:
+                print(e)
+                await ctx.send(**em(type_="error",
+                                    content="Oh an error occurred, this shouldn't happen please contact the "
+                                            "core developer `Arthur#0002`!\n"
+                                            f"Exception type: `{type(e).__name__}`\n"
+                                            f"Arguments: \n```\n{e.args}\n```"))
 
 
 def setup(bot):
