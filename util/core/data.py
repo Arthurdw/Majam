@@ -138,8 +138,8 @@ def add_command(server_id: int, author, name: str, response: str):
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, name text, response text)")
     parameters = (datetime.datetime.now(), server_id, author, name.strip().lower(), response.strip())
-    command_info = cursor.execute("INSERT INTO servers VALUES (?, ?, ?, ?, ?)", parameters)
-    output = command_info.fetchall()
+    command_information = cursor.execute("INSERT INTO servers VALUES (?, ?, ?, ?, ?)", parameters)
+    output = command_information.fetchall()
     connect.commit()
     connect.close()
     return output
