@@ -72,7 +72,6 @@ class Main(commands.Cog):
             await ctx.send(**em(content="Successfully updated the version!\n"
                                         f"From {old_version} to {version}!"))
 
-
     @checks.management()
     @development.command(name="fetch")
     async def fetch(self, ctx, database):
