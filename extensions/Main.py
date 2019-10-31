@@ -2,8 +2,6 @@ import datetime
 import configparser
 import json
 import discord
-import re
-from discord import utils
 from discord.ext import commands
 from util.core import data, formatter, checks, GitHub
 
@@ -60,6 +58,20 @@ class Main(commands.Cog):
                 icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
             embed.timestamp = datetime.datetime.now()
             await ctx.send(embed=embed)
+
+    @checks.management()
+    @development.command(name="update")
+    async def update(self, ctx):
+        """Updates the bot version."""
+        old_version = Main.version
+        global version
+        version = GitHub.version()
+        if version == old_version:
+            await ctx.send(**em(content=f"Already running on the latest version!"))
+        else:
+            await ctx.send(**em(content="Successfully updated the version!\n"
+                                        f"From {old_version} to {version}!"))
+
 
     @checks.management()
     @development.command(name="fetch")
