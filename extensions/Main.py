@@ -103,7 +103,7 @@ class Main(commands.Cog):
 
     @commands.command(name="say")
     async def say(self, ctx, *, content=None):
-        """Embeds a message, you can customize these embeds fully!"""
+        """Embeds a message, you can customize these embeds fully using JSON!"""
         async def send_message(_content):
             if (str(_content).strip())[:1] == "{" and (str(_content).strip())[-1:] == "}":
                 contents = json.loads(_content)
