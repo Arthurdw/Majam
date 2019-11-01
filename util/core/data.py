@@ -22,6 +22,51 @@ def fetch_all(database: str):
     connect.close()
     return fetch
 
+################
+#  AUTO ROLES  #
+################
+
+
+def get_auto_role(server_id: int):
+    """Gets all auto roles from a server!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["autoRoleDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (server_id int, role_id int)")
+    selection = cursor.execute(f"SELECT role_id from servers WHERE server_id = {server_id}")
+    roles = selection.fetchall()
+    connect.commit()
+    connect.close()
+    return roles
+
+
+def add_auto_role(server_id: int, role_id: int):
+    connect = sqlite3.connect(commandConfig["DATABASE"]["autoRoleDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (server_id int, role_id int)")
+    parameters = (server_id, role_id)
+    cursor.execute("INSERT INTO servers VALUES (?, ?)", parameters)
+    connect.commit()
+    connect.close()
+
+
+def remove_auto_role(server_id: int, role_id: int):
+    """Removes a auto role!"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["autoRoleDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute("SELECT * FROM servers")
+    except sqlite3.OperationalError as e:
+        cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, prefix text)")
+    cursor.execute(f"DELETE FROM servers WHERE server_id = {server_id} AND role_id = {role_id}")
+    connect.commit()
+    connect.close()
+
 #################
 # CUSTOM PREFIX #
 #################
