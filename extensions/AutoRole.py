@@ -71,7 +71,8 @@ class AutoRole(commands.Cog):
                 await ctx.send(**em(type_="error",
                                     content="Please provide a role that I should remove from the auto role system!\n"
                                             "For more information you can check out the "
-                                            f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                            f"__**[docs]({config['DOCS']['customCommands']}"
+                                            f"\"Alexi Documentation\")**__."))
             else:
                 roles = data.get_auto_role(ctx.message.guild.id)
                 if not roles:
@@ -91,8 +92,8 @@ class AutoRole(commands.Cog):
                         for _role in roles:
                             if role_id == _role[0]:
                                 data.remove_auto_role(ctx.message.guild.id, role_id)
-                                await ctx.send(**em(content="I successfully removed the autorole for the role with an ID of"
-                                                            f"`{role_id}`!"))
+                                await ctx.send(**em(content="I successfully removed the"
+                                                            f"autorole for the role with an ID of `{role_id}`!"))
                                 return
                         await ctx.send(**em(type_="error",
                                             content="I didn't find an auto role with that ID!"))
@@ -114,7 +115,7 @@ class AutoRole(commands.Cog):
                 _role = ctx.guild.get_role(role_id=item)
                 final_tuple += (_role.mention + "(`" + str(item) + "`)",)
             _role_list = command_list.join(final_tuple)
-            await ctx.send(**em(content="These are all the auto-roles that apply to this server!"
+            await ctx.send(**em(content="These are all the auto-roles that apply to this server!\n"
                                         f"Auto roles: {_role_list}"))
 
     @commands.Cog.listener()
