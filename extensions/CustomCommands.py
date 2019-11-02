@@ -162,8 +162,8 @@ class CustomCommands(commands.Cog):
                                         f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
         else:
             name = str(command).lower().strip()
-            if data.get_command(ctx.message.guild.id, name) is None or \
-                    data.get_command(ctx.message.guild.id, name) == []:
+            if data.command_info(ctx.message.guild.id, name) is None or \
+                    data.command_info(ctx.message.guild.id, name) == []:
                 await ctx.send(**em(type_="error",
                                     content=f"This command doesnt exist. (`{name}`)\n"
                                             "Please give right the command name!"))
@@ -197,8 +197,8 @@ class CustomCommands(commands.Cog):
             if response == "":
                 await ctx.send(**em(type_="error",
                                     content="You need to give me a response!"))
-            elif data.get_command(ctx.message.guild.id, name) is None or\
-                    data.get_command(ctx.message.guild.id, name) == []:
+            elif data.command_info(ctx.message.guild.id, name) is None or\
+                    data.command_info(ctx.message.guild.id, name) == []:
                 if len(str(name).strip()) > 10:
                     char = 'characters'
                     if len(str(name).strip())-10 == 1:
