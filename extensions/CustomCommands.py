@@ -114,12 +114,12 @@ class CustomCommands(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
-                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                        f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         elif 'return' not in str(command).lower().split(' '):
             await ctx.send(**em(type_="error",
                                 content="Please use the correct *syntax* to remove a command.\n"
                                         "For more information you can check out the "
-                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                        f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         else:
             items = str(command).lower().split(" ")
             if 'to' in items:
@@ -159,7 +159,7 @@ class CustomCommands(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
-                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                        f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         else:
             name = str(command).lower().strip()
             if data.command_info(ctx.message.guild.id, name) is None or \
@@ -186,12 +186,12 @@ class CustomCommands(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="Please provide a command *name* and a *response*!\n"
                                         "For more information you can check out the "
-                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                        f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         elif 'return' not in str(command).lower().split(' '):
             await ctx.send(**em(type_="error",
                                 content="Please use the correct *syntax* to add a command.\n"
                                         "For more information you can check out the "
-                                        f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                        f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         else:
             name, response = CustomCommands.parse_command(command)
             if response == "":
@@ -208,7 +208,7 @@ class CustomCommands(commands.Cog):
                                                 f"`{name}` is `{len(str(name).strip())}` characters!\n"
                                                 f"That's `{len(str(name).strip())-10}` {char} to much!"))
                 else:
-                    data.add_command(ctx.message.guild.id, ctx.message.author.id, name, response)
+                    data.add_commandadd_command(ctx.message.guild.id, ctx.message.author.id, name, response)
                     await ctx.send(**em(content="Successfully created a command with the following specifications:\n"
                                                 f"Name: `{name}`\n"
                                                 f"Response: `{response}`"))
