@@ -10,7 +10,7 @@ from util.core import data, formatter, checks, GitHub
 config = configparser.ConfigParser()
 config.read("config.cfg")
 em = formatter.embed_message
-version = GitHub.version()
+# version = GitHub.version()
 
 
 class Main(commands.Cog):
@@ -40,40 +40,40 @@ class Main(commands.Cog):
         """All bot dev commands!"""
         await ctx.send(**em(self.default(ctx)))
 
-    @development.command(name='version')
-    async def version(self, ctx):
-        """Retrieve the latest bot version. (and the current one)"""
-        latest = GitHub.version()
-        if version == latest:
-            embed = formatter.embed_message(content=f"Currently running on version: \n`{version}`",
-                                            footer=False)["embed"]
-            embed.set_footer(
-                text=(config["UTILITY"]["default_footer_message"])[1:-8],
-                icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
-            embed.timestamp = datetime.datetime.now()
-            await ctx.send(embed=embed)
-        else:
-            embed = formatter.embed_message(content=f"Currently running on old version: `{version}`\n"
-                                                    f"Latest version: `{latest}`",
-                                            footer=False)["embed"]
-            embed.set_footer(
-                text=(config["UTILITY"]["default_footer_message"])[1:-8],
-                icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
-            embed.timestamp = datetime.datetime.now()
-            await ctx.send(embed=embed)
-
-    @checks.management()
-    @development.command(name="update")
-    async def update(self, ctx):
-        """Updates the bot version."""
-        global version
-        old_version = version
-        version = GitHub.version()
-        if version == old_version:
-            await ctx.send(**em(content=f"Already running on the latest version!"))
-        else:
-            await ctx.send(**em(content="Successfully updated the version!\n"
-                                        f"From `{old_version}` to `{version}`!"))
+    # @development.command(name='version')
+    # async def version(self, ctx):
+    #     """Retrieve the latest bot version. (and the current one)"""
+    #     latest = GitHub.version()
+    #     if version == latest:
+    #         embed = formatter.embed_message(content=f"Currently running on version: \n`{version}`",
+    #                                         footer=False)["embed"]
+    #         embed.set_footer(
+    #             text=(config["UTILITY"]["default_footer_message"])[1:-8],
+    #             icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
+    #         embed.timestamp = datetime.datetime.now()
+    #         await ctx.send(embed=embed)
+    #     else:
+    #         embed = formatter.embed_message(content=f"Currently running on old version: `{version}`\n"
+    #                                                 f"Latest version: `{latest}`",
+    #                                         footer=False)["embed"]
+    #         embed.set_footer(
+    #             text=(config["UTILITY"]["default_footer_message"])[1:-8],
+    #             icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
+    #         embed.timestamp = datetime.datetime.now()
+    #         await ctx.send(embed=embed)
+    #
+    # @checks.management()
+    # @development.command(name="update")
+    # async def update(self, ctx):
+    #     """Updates the bot version."""
+    #     global version
+    #     old_version = version
+    #     version = GitHub.version()
+    #     if version == old_version:
+    #         await ctx.send(**em(content=f"Already running on the latest version!"))
+    #     else:
+    #         await ctx.send(**em(content="Successfully updated the version!\n"
+    #                                     f"From `{old_version}` to `{version}`!"))
 
     @checks.management()
     @development.command(name="fetch")
