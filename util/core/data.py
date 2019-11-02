@@ -68,6 +68,34 @@ def db_add(db, table, table_values, parameters, questions):
 
 
 ##################
+#   STATISTICS   #
+##################
+
+
+def add_global_command_count():
+    pass
+
+
+def add_guild_command_count(guild_id: int):
+    pass
+
+
+def add_global_message_count():
+    pass
+
+
+def add_guild_message_count(guild_id: int):
+    pass
+
+
+def get_global_message_count():
+    pass
+
+
+def get_guild_message_count(guild_id: int):
+    pass
+
+##################
 #    CURRENCY    #
 ##################
 
@@ -192,6 +220,16 @@ def set_prefix(server_id, author, prefix):
     cursor.execute("INSERT INTO servers VALUES (?, ?, ?, ?)", parameters)
     connect.commit()
     connect.close()
+
+
+def reset_prefix(server_id: int):
+    """Resets a server their prefix"""
+    db_update(db=commandConfig["DATABASE"]["utilityDB"],
+              table="servers",
+              table_values="(date blob, server_id int, creator_id int, prefix text)",
+              exe=f"WHERE server_id = {server_id}",
+              instant_insert=True,
+              instant_action="DELETE FROM")
 
 
 ###################

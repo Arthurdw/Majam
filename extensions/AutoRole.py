@@ -121,6 +121,11 @@ class AutoRole(commands.Cog):
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_join(self, member):
+        if member.guild.id == 634141277788831795:
+            if member.bot:
+                bot_role = member.guild.get_role(role_id=638388474654752768)
+                await member.add_roles(bot_role, reason=f"Auto join bot role for {member.name}")
+                return
         auto_roles = data.get_auto_role(member.guild.id)
         if auto_roles:
             for role in auto_roles:

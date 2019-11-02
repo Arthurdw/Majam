@@ -1,2 +1,3 @@
 pygithub
 discord.py[voice]
+dblpy

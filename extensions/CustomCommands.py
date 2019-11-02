@@ -77,7 +77,7 @@ class CustomCommands(commands.Cog):
                                         f"Command: `{cmd_info[0][3]}`\n"
                                         f"Author: <@{cmd_info[0][2]}>\n"
                                         f"Guild: `{guild.name}`\n"
-                                        f"Raw response: `{cmd_info[0][4]}`\n"))
+                                        f"Raw response: `{str(cmd_info[0][4]).replace('`', '´')}`\n"))
 
     @commands.guild_only()
     @command.command(name='list')
@@ -98,7 +98,8 @@ class CustomCommands(commands.Cog):
             _command_list = command_list.join(final_tuple)
             await ctx.send(**em(content="These are all the server commands!\n"
                                         "You can get more information for each command using"
-                                        f"`{utils.escape_mentions(ctx.prefix)}command info`\nCommands: {_command_list}"))
+                                        f"`{utils.escape_mentions(ctx.prefix)}command info`\n"
+                                        f"Commands: {_command_list}"))
 
     @commands.guild_only()
     @command.command(name="edit", aliases=["change"])
@@ -139,12 +140,14 @@ class CustomCommands(commands.Cog):
                 data.edit_command(ctx.guild.id, name, new_name, response)
                 await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
                                             f"Changed the name from `{name}` to `{new_name}`!\n"
-                                            f"The new output will be this:\n```\n{response}\n```"))
+                                            f"The new output will be this:\n"
+                                            f"```\n{str(response).replace('`', '´')}\n```"))
             else:
                 name, response = CustomCommands.parse_command(command)
                 data.edit_command(ctx.guild.id, name, name, response)
                 await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
-                                            f"The new output will be this:\n```\n{response}\n```"))
+                                            f"The new output will be this:\n"
+                                            f"```\n{str(response).replace('`', '´')}\n```"))
 
     @commands.guild_only()
     @command.command(name="remove", aliases=["delete", "del"])
@@ -208,15 +211,16 @@ class CustomCommands(commands.Cog):
                                                 f"`{name}` is `{len(str(name).strip())}` characters!\n"
                                                 f"That's `{len(str(name).strip())-10}` {char} to much!"))
                 else:
-                    data.add_commandadd_command(ctx.message.guild.id, ctx.message.author.id, name, response)
+                    data.add_command(ctx.message.guild.id, ctx.message.author.id, name, response)
                     await ctx.send(**em(content="Successfully created a command with the following specifications:\n"
                                                 f"Name: `{name}`\n"
-                                                f"Response: `{response}`"))
+                                                f"Response: `{str(response).replace('`', '´')}`"))
             else:
+                response = data.get_response(ctx.message.guild.id, name).replace('`', '´')
                 await ctx.send(**em(type_="error",
                                     content=f"This command already exists. (`{name}`)\n"
                                             "Command Response:\n"
-                                            f"```\n{data.get_response(ctx.message.guild.id, name)}\n```\n"
+                                            f"```\n{response}\n```\n"
                                             "Please give the command another name!"))
 
     @commands.guild_only()

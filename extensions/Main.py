@@ -3,6 +3,7 @@ import configparser
 import json
 import glob
 import discord
+import sqlite3
 from discord.ext import commands
 from util.core import data, formatter, checks, GitHub
 
@@ -129,8 +130,22 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         await ctx.send(**em(self.default(ctx) + f"\nCurrent prefix: `{prefix}` or just mention me!"))
 
+    @prefix.command(name="reset")
+    async def reset(self, ctx):
+        """Resets a server their prefix."""
+        if not ctx.author.guild_permissions.administrator:
+            await ctx.send(**em(type_="error",
+                                content="You need to have at least administrator permission to edit a custom command!"))
+        else:
+            try:
+                data.reset_prefix(ctx.guild.id)
+                await ctx.send(**em(content=f"Successfully reset the server prefix!"))
+            except sqlite3.OperationalError:
+                await ctx.send(**em(type_="error",
+                                    content="I don't think this server has a custom prefix..."))
+
     @prefix.command(name="set")
-    async def set(self, ctx, *, prefix=None):
+    async def set(self, ctx, prefix=None):
         """Add/Set your custom prefix"""
         if not ctx.author.guild_permissions.administrator:
             await ctx.send(**em(type_="error",
@@ -153,6 +168,19 @@ class Main(commands.Cog):
                                             "core developer `Arthur#0002`!\n"
                                             f"Exception type: `{type(e).__name__}`\n"
                                             f"Arguments: \n```\n{e.args}\n```"))
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        mentions = ['<@634141001769943090>', '<@!634141001769943090>']
+        ctx = await self.bot.get_context(message)
+        if ctx.valid:
+            pass
+        else:
+            for item in mentions:
+                if item in str(message.content):
+                    prefix = data.get_prefix(bot=self.bot, message=message, db_only=True)
+                    await ctx.send(**em(f"\nCurrent prefix:`{prefix}` or just mention me!"))
+                    break
 
 
 def setup(bot):
