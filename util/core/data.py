@@ -72,30 +72,43 @@ def db_add(db, table, table_values, parameters, questions):
 ##################
 
 
-# def get_global_bal(user_id: int):
-#     """Gets the cash and bank from a user!"""
-#     return db_get(db=commandConfig["DATABASE"]["currencyDB"],
-#                   table="global_balance",
-#                   table_values="(user_id int, bank int, cash int)",
-#                   exe=f"SELECT cash, bank FROM global_balance WHERE user_id = {user_id}")
-#
-#
-# def add_global_bal(user_id: int, balance: int):
-#     """Gives a user global cash!"""
-#     db_update(db=commandConfig["DATABASE"]["currencyDB"],
-#               table="global_balance",
-#               table_values="(user_id int, bank int, cash int)",
-#               parameters=(user_id, 0, balance),
-#               exe=f"SET cash += {balance} WHERE user_id = {user_id}")
-#
-#
-# def remove_global_bal(user_id: int, balance: int):
-#     """Takes a user their global cash!"""
-#     db_update(db=commandConfig["DATABASE"]["currencyDB"],
-#               table="global_balance",
-#               table_values="(user_id int, bank int, cash int)",
-#               parameters=(user_id, 0, balance),
-#               exe=f"SET cash -= {balance} WHERE user_id = {user_id}")
+def get_base(user_id: int, balance: int, add=True):
+    bal = get_global_bal(user_id=user_id)
+    if not bal:
+        bal = [(0, 0,)]
+    cash = bal[0][1]
+    final = cash - balance
+    if add:
+        final = cash + balance
+    return final
+
+
+def get_global_bal(user_id: int):
+    """Gets the cash and bank from a user!"""
+    return db_get(db=commandConfig["DATABASE"]["currencyDB"],
+                  table="global_balance",
+                  table_values="(user_id int, bank int, cash int)",
+                  exe=f"SELECT cash, bank FROM global_balance WHERE user_id = {user_id}")
+
+
+def add_global_bal(user_id: int, balance: int):
+    """Gives a user global cash!"""
+    added = get_base(user_id, balance)
+    db_update(db=commandConfig["DATABASE"]["currencyDB"],
+              table="global_balance",
+              table_values="(user_id int, bank int, cash int)",
+              parameters=(user_id, 0, balance),
+              exe=f"SET cash = {added} WHERE user_id = {user_id}")
+
+
+def remove_global_bal(user_id: int, balance: int):
+    """Takes a user their global cash!"""
+    removed = get_base(user_id, balance)
+    db_update(db=commandConfig["DATABASE"]["currencyDB"],
+              table="global_balance",
+              table_values="(user_id int, bank int, cash int)",
+              parameters=(user_id, 0, balance),
+              exe=f"SET cash = {removed} WHERE user_id = {user_id}")
 
 ################
 #  AUTO ROLES  #
