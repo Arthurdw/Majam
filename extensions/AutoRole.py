@@ -33,7 +33,8 @@ class AutoRole(commands.Cog):
                 await ctx.send(**em(type_="error",
                                     content="Please provide a role that I should add to the auto role system!\n"
                                             "For more information you can check out the "
-                                            f"__**[docs]({config['DOCS']['customCommands']} \"Alexi Documentation\")**__."))
+                                            f"__**[docs]({config['DOCS']['webDocs']} "
+                                            f"\"Alexi Documentation\")**__."))
             else:
                 role_id = role
                 try:
@@ -42,7 +43,7 @@ class AutoRole(commands.Cog):
                     await ctx.send(**em(type_="error",
                                         content="You should provide a valid role id! *(this is a number)*\n"
                                                 "For more information you can check out the "
-                                                f"__**[docs]({config['DOCS']['customCommands']} "
+                                                f"__**[docs]({config['DOCS']['webDocs']} "
                                                 f"\"Alexi Documentation\")**__."))
                 else:
                     roles = data.get_auto_role(ctx.message.guild.id)
@@ -70,7 +71,7 @@ class AutoRole(commands.Cog):
                 await ctx.send(**em(type_="error",
                                     content="Please provide a role that I should remove from the auto role system!\n"
                                             "For more information you can check out the "
-                                            f"__**[docs]({config['DOCS']['customCommands']}"
+                                            f"__**[docs]({config['DOCS']['webDocs']}"
                                             f"\"Alexi Documentation\")**__."))
             else:
                 roles = data.get_auto_role(ctx.message.guild.id)
@@ -85,7 +86,7 @@ class AutoRole(commands.Cog):
                         await ctx.send(**em(type_="error",
                                             content="You should provide a valid role id! *(this is a number)*\n"
                                                     "For more information you can check out the "
-                                                    f"__**[docs]({config['DOCS']['customCommands']} "
+                                                    f"__**[docs]({config['DOCS']['webDocs']} "
                                                     f"\"Alexi Documentation\")**__."))
                     else:
                         for _role in roles:
