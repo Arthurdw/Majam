@@ -62,6 +62,8 @@ class CustomCommands(commands.Cog):
     async def info(self, ctx, command=None):
         """Retrieves information about a command!
         (Creation date, server, creator, name, raw response, response)"""
+        if command is None:
+            await ctx.send(**em(content="Please provide a command that I should show information about!"))
         cmd_info = data.command_info(ctx.guild.id, command)
         extra = ""
         if len(command) < 11:
@@ -113,12 +115,12 @@ class CustomCommands(commands.Cog):
                                 content="You need to have at least administrator permission to edit a custom command!"))
         elif command is None:
             await ctx.send(**em(type_="error",
-                                content="Please provide a command that I should remove!\n"
+                                content="Please provide a command that I should edit!\n"
                                         "For more information you can check out the "
                                         f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         elif 'return' not in str(command).lower().split(' '):
             await ctx.send(**em(type_="error",
-                                content="Please use the correct *syntax* to remove a command.\n"
+                                content="Please use the correct *syntax* to edit a command.\n"
                                         "For more information you can check out the "
                                         f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         else:

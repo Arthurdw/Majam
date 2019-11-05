@@ -1,5 +1,4 @@
 import configparser
-import discord
 from discord.ext import commands
 from util.core import data, formatter
 
@@ -28,7 +27,7 @@ class AutoRole(commands.Cog):
         The role you provided must be an id"""
         if not ctx.author.guild_permissions.administrator:
             await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to edit a custom command!"))
+                                content="You need to have at least administrator permission to add an auto role!!"))
         else:
             if role is None:
                 await ctx.send(**em(type_="error",
@@ -65,7 +64,7 @@ class AutoRole(commands.Cog):
         """Removed a role from the auto role system."""
         if not ctx.author.guild_permissions.administrator:
             await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to edit a custom command!"))
+                                content="You need to have at least administrator permission to remove an autorole!"))
         else:
             if role is None:
                 await ctx.send(**em(type_="error",
