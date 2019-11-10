@@ -35,6 +35,12 @@ class Main(commands.Cog):
                                     "client_id=634141001769943090&permissions=8&scope=bot "
                                     "\"Invite me please :D\")**__"))
 
+    @commands.command(name="support")
+    async def support(self, ctx):
+        """Retrieve a link to the Alexi support server!"""
+        await ctx.send(**em(content="Join our __**[Support Server](https://discord.gg/JA6dqWV"
+                                    "\"Join Alexi's support server!\")**__!"))
+
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):
         """All bot dev commands!"""

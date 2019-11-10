@@ -5,8 +5,6 @@ import datetime
 commandConfig = configparser.ConfigParser()
 commandConfig.read('config.cfg')
 
-# TODO:
-#     Optimize DB executes
 
 #######################
 # GENERAL DB COMMANDS #
