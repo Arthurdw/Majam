@@ -124,8 +124,13 @@ class CustomCommands(commands.Cog):
                                         "For more information you can check out the "
                                         f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         else:
-            items = str(command).lower().split(" ")
-            if 'to' in items:
+            cmd_name = str(command).lower().strip()
+            if data.command_info(ctx.message.guild.id, cmd_name) is None or \
+                    data.command_info(ctx.message.guild.id, cmd_name) == []:
+                await ctx.send(**em(type_="error",
+                                    content=f"This command doesnt exist. (`{cmd_name}`)\n"
+                                            "Please give right the command name!"))
+            elif 'to' in cmd_name:
                 try:
                     name, after_to = str(command).lower().split("to")
                     name, after_to = str(name).strip(), str(after_to).strip()
