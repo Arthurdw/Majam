@@ -130,12 +130,7 @@ class CustomCommands(commands.Cog):
                                         f"__**[docs]({config['DOCS']['rawDocs']} \"Alexi Documentation\")**__."))
         else:
             cmd_name = str(command).lower().strip()
-            if data.command_info(ctx.message.guild.id, cmd_name) is None or \
-                    data.command_info(ctx.message.guild.id, cmd_name) == []:
-                await ctx.send(**em(type_="error",
-                                    content=f"This command doesnt exist. (`{cmd_name}`)\n"
-                                            "Please give right the command name!"))
-            elif 'to' in cmd_name:
+            if 'to' in cmd_name:
                 try:
                     name, after_to = str(command).lower().split("to")
                     name, after_to = str(name).strip(), str(after_to).strip()
@@ -149,11 +144,17 @@ class CustomCommands(commands.Cog):
                     sliced = after_to.split('return')
                     new_name = sliced[0].strip()
                     response = after_to[len(sliced[0] + 'return'):]
-                data.edit_command(ctx.guild.id, name, new_name, response)
-                await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
-                                            f"Changed the name from `{name}` to `{new_name}`!\n"
-                                            f"The new output will be this:\n"
-                                            f"```\n{str(response).replace('`', '´')}\n```"))
+                if data.command_info(ctx.message.guild.id, cmd_name) is None or \
+                        data.command_info(ctx.message.guild.id, cmd_name) == []:
+                    await ctx.send(**em(type_="error",
+                                        content=f"This command doesnt exist. (`{cmd_name}`)\n"
+                                                "Please give right the command name!"))
+                else:
+                    data.edit_command(ctx.guild.id, name, new_name, response)
+                    await ctx.send(**em(content=f"Successfully updated the `{name}` command!\n"
+                                                f"Changed the name from `{name}` to `{new_name}`!\n"
+                                                f"The new output will be this:\n"
+                                                f"```\n{str(response).replace('`', '´')}\n```"))
             else:
                 name, response = CustomCommands.parse_command(command)
                 data.edit_command(ctx.guild.id, name, name, response)
