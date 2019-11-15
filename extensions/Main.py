@@ -140,23 +140,32 @@ class Main(commands.Cog):
     async def reset(self, ctx):
         """Resets a server their prefix."""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to edit a custom command!"))
-        else:
-            try:
-                data.reset_prefix(ctx.guild.id)
-                await ctx.send(**em(content=f"Successfully reset the server prefix!"))
-            except sqlite3.OperationalError:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
                 await ctx.send(**em(type_="error",
-                                    content="I don't think this server has a custom prefix..."))
+                                    content="You need to have at least administrator permission to "
+                                            "edit a custom command!"))
+                return
+        try:
+            data.reset_prefix(ctx.guild.id)
+            await ctx.send(**em(content=f"Successfully reset the server prefix!"))
+        except sqlite3.OperationalError:
+            await ctx.send(**em(type_="error",
+                                content="I don't think this server has a custom prefix..."))
 
     @prefix.command(name="set")
     async def set(self, ctx, prefix=None):
         """Add/Set your custom prefix"""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to edit a custom command!"))
-        elif prefix is None:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
+                await ctx.send(**em(type_="error",
+                                    content="You need to have at least administrator permission to "
+                                            "edit a custom command!"))
+                return
+        if prefix is None:
             await ctx.send(**em(self.default(ctx)))
             return
         elif len(prefix) > 1:

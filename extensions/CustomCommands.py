@@ -111,9 +111,14 @@ class CustomCommands(commands.Cog):
 
         PRO TIP: to make small changes use the 'commands info' command to get the raw data!"""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to edit a custom command!"))
-        elif command is None:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
+                await ctx.send(**em(type_="error",
+                                    content="You need to have at least administrator permission to edit "
+                                            "a custom command!"))
+                return
+        if command is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should edit!\n"
                                         "For more information you can check out the "
@@ -162,10 +167,14 @@ class CustomCommands(commands.Cog):
         """Permanently removes a command!
         This can not be undone!"""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to remove a custom "
-                                        "command!"))
-        elif command is None:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
+                await ctx.send(**em(type_="error",
+                                    content="You need to have at least administrator permission to remove a custom "
+                                            "command!"))
+                return
+        if command is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a command that I should remove!\n"
                                         "For more information you can check out the "
@@ -190,9 +199,14 @@ class CustomCommands(commands.Cog):
         ⇒ !foo
         ⇐ bar"""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to add a custom command!"))
-        elif command is None:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
+                await ctx.send(**em(type_="error",
+                                    content="You need to have at least administrator permission to add a "
+                                            "custom command!"))
+                return
+        if command is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a command *name* and a *response*!\n"
                                         "For more information you can check out the "

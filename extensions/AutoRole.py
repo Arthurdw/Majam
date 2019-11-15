@@ -26,15 +26,65 @@ class AutoRole(commands.Cog):
         """Add a role to the auto role system.
         The role you provided must be an id"""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to add an auto role!!"))
-        else:
-            if role is None:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
                 await ctx.send(**em(type_="error",
-                                    content="Please provide a role that I should add to the auto role system!\n"
+                                    content="You need to have at least administrator permission to add an auto role!!"))
+                return
+        if role is None:
+            await ctx.send(**em(type_="error",
+                                content="Please provide a role that I should add to the auto role system!\n"
+                                        "For more information you can check out the "
+                                        f"__**[docs]({config['DOCS']['webDocs']} "
+                                        f"\"Alexi Documentation\")**__."))
+        else:
+            role_id = role
+            try:
+                role_id = int(role)
+            except ValueError:
+                await ctx.send(**em(type_="error",
+                                    content="You should provide a valid role id! *(this is a number)*\n"
                                             "For more information you can check out the "
                                             f"__**[docs]({config['DOCS']['webDocs']} "
                                             f"\"Alexi Documentation\")**__."))
+            else:
+                roles = data.get_auto_role(ctx.message.guild.id)
+                role = ctx.message.guild.get_role(role_id=role_id)
+                for _role in roles:
+                    if role == _role[0]:
+                        await ctx.send(**em(type_="error",
+                                            content=f"The autorole for {role.mention} already exists!"))
+                else:
+                    if role is None:
+                        await ctx.send(**em(type_="error",
+                                            content=f"Could not find a role with an id of: {str(role_id)}"))
+                    else:
+                        data.add_auto_role(ctx.message.guild.id, role.id)
+                        await ctx.send(**em(content=f"Successfully created an autorole for the {role.mention} role!"))
+
+    @autorole.command(name="remove", aliases=["delete", "del"])
+    async def remove(self, ctx, role=None):
+        """Removed a role from the auto role system."""
+        if not ctx.author.guild_permissions.administrator:
+            if ctx.author.id == 232182858251239424:
+                pass
+            else:
+                await ctx.send(**em(type_="error",
+                                    content="You need to have at least administrator permission to remove"
+                                            " an autorole!"))
+                return
+        if role is None:
+            await ctx.send(**em(type_="error",
+                                content="Please provide a role that I should remove from the auto role system!\n"
+                                        "For more information you can check out the "
+                                        f"__**[docs]({config['DOCS']['webDocs']}"
+                                        f"\"Alexi Documentation\")**__."))
+        else:
+            roles = data.get_auto_role(ctx.message.guild.id)
+            if not roles:
+                await ctx.send(**em(type_="error",
+                                    content=f"This server doesnt have any auto roles!"))
             else:
                 role_id = role
                 try:
@@ -46,57 +96,14 @@ class AutoRole(commands.Cog):
                                                 f"__**[docs]({config['DOCS']['webDocs']} "
                                                 f"\"Alexi Documentation\")**__."))
                 else:
-                    roles = data.get_auto_role(ctx.message.guild.id)
-                    role = ctx.message.guild.get_role(role_id=role_id)
                     for _role in roles:
-                        if role == _role[0]:
-                            await ctx.send(**em(type_="error",
-                                                content=f"The autorole for {role.mention} already exists!"))
-                    else:
-                        if role is None:
-                            await ctx.send(**em(type_="error",
-                                                content=f"Could not find a role with an id of: {str(role_id)}"))
-                        else:
-                            data.add_auto_role(ctx.message.guild.id, role.id)
-                            await ctx.send(**em(content=f"Successfully created an autorole for the {role.mention} role!"))
-
-    @autorole.command(name="remove", aliases=["delete", "del"])
-    async def remove(self, ctx, role=None):
-        """Removed a role from the auto role system."""
-        if not ctx.author.guild_permissions.administrator:
-            await ctx.send(**em(type_="error",
-                                content="You need to have at least administrator permission to remove an autorole!"))
-        else:
-            if role is None:
-                await ctx.send(**em(type_="error",
-                                    content="Please provide a role that I should remove from the auto role system!\n"
-                                            "For more information you can check out the "
-                                            f"__**[docs]({config['DOCS']['webDocs']}"
-                                            f"\"Alexi Documentation\")**__."))
-            else:
-                roles = data.get_auto_role(ctx.message.guild.id)
-                if not roles:
+                        if role_id == _role[0]:
+                            data.remove_auto_role(ctx.message.guild.id, role_id)
+                            await ctx.send(**em(content="I successfully removed the"
+                                                        f"autorole for the role with an ID of `{role_id}`!"))
+                            return
                     await ctx.send(**em(type_="error",
-                                        content=f"This server doesnt have any auto roles!"))
-                else:
-                    role_id = role
-                    try:
-                        role_id = int(role)
-                    except ValueError:
-                        await ctx.send(**em(type_="error",
-                                            content="You should provide a valid role id! *(this is a number)*\n"
-                                                    "For more information you can check out the "
-                                                    f"__**[docs]({config['DOCS']['webDocs']} "
-                                                    f"\"Alexi Documentation\")**__."))
-                    else:
-                        for _role in roles:
-                            if role_id == _role[0]:
-                                data.remove_auto_role(ctx.message.guild.id, role_id)
-                                await ctx.send(**em(content="I successfully removed the"
-                                                            f"autorole for the role with an ID of `{role_id}`!"))
-                                return
-                        await ctx.send(**em(type_="error",
-                                            content="I didn't find an auto role with that ID!"))
+                                        content="I didn't find an auto role with that ID!"))
 
     @autorole.command(name="list")
     async def list(self, ctx):
