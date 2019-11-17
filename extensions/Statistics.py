@@ -21,6 +21,7 @@ class Statistics(commands.Cog):
         global_message = data.get_global_message_count()[0][0]
         global_commands = data.get_global_command_count()[0][0]
         global_custom_commands = data.get_global_custom_command_count()[0][0]
+        custom_commands = len(data.fetch_all(config["DATABASE"]["commandsDB"]))
         guilds = str(len(self.bot.guilds))
         members = str(len(set(self.bot.get_all_members())) - 1)
         uptime = str(datetime.timedelta(seconds=int(round(time.time() - start))))
@@ -34,8 +35,9 @@ class Statistics(commands.Cog):
                                     f"Members: `{members}`\n"
                                     f"Guilds: `{guilds}`\n"
                                     f"Messages: `{global_message}`\n"
-                                    f"Commands: `{global_commands}`\n"
-                                    f"Custom Commands: `{global_custom_commands}`\n\n"
+                                    f"Custom commands:  `{custom_commands}`\n"
+                                    f"Commands executed: `{global_commands}`\n"
+                                    f"Custom Commands executed: `{global_custom_commands}`\n\n"
                                     f"**Ping:**\n"
                                     f"Latency: `{round(self.bot.latency * 1000, 2)}` ms\n"
                                     f"Response Time: `{response_time}` ms\n\n"))
