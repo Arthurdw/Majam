@@ -71,7 +71,7 @@ def db_add(db, table, table_values, parameters, questions):
 
 
 def get_global_command_count():
-    """Gets the global message count!"""
+    """Gets the global command count!"""
     return db_get(db=commandConfig["DATABASE"]["stats"],
                   table="global",
                   table_values="(type string, amount int)",
@@ -86,6 +86,24 @@ def add_global_command_count():
               table_values="(type string, amount int)",
               parameters=_commands,
               exe=f"SET amount = {_commands} WHERE type = 'command'")
+
+
+def get_global_custom_command_count():
+    """Gets the global custom command message count!"""
+    return db_get(db=commandConfig["DATABASE"]["stats"],
+                  table="global",
+                  table_values="(type string, amount int)",
+                  exe=f"SELECT amount FROM global WHERE type = 'custom-command'")
+
+
+def add_global_custom_command_count():
+    """Adds a command to the total custom command count!"""
+    _commands = get_global_custom_command_count()[0][0] + 1
+    db_update(db=commandConfig["DATABASE"]["stats"],
+              table="global",
+              table_values="(type string, amount int)",
+              parameters=_commands,
+              exe=f"SET amount = {_commands} WHERE type = 'custom-command'")
 
 
 def get_global_message_count():
