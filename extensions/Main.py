@@ -22,6 +22,24 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
+    @commands.cooldown(1, 3600, commands.BucketType.user)
+    @commands.command(name="suggest")
+    async def suggest(self, ctx, *, suggestion=None):
+        if suggestion is None:
+            await ctx.send(**em(type_="error",
+                                content="You need to provide a suggestion!"))
+            ctx.command.reset_cooldown(ctx)
+            return
+        sg_channel = self.bot.get_channel(648249834330914856)
+        _suggestion = await sg_channel.send(**em(content=f"**Author**: {ctx.author.mention} *({ctx.author.id})*\n"
+                                                         f"**Suggestion**:\n```"
+                                                         f"{str(suggestion).lower().capitalize().replace('`', '´')}"
+                                                         f"```"))
+        await ctx.send(**em(content=f"Successfully send [your suggestion]({_suggestion.jump_url} \"{ctx.author.name}'s "
+                                    f"suggestion!\")!"))
+        for item in [648250030943240214, 648250031455076352, 648250031198961685]:
+            await _suggestion.add_reaction(self.bot.get_emoji(item))
+
     @commands.command(name="docs", aliases=["documentation"])
     async def docs(self, ctx):
         """Retrieve the link to the documentation!"""
