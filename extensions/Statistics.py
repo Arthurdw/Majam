@@ -1,7 +1,6 @@
 import configparser
 import time
 import datetime
-from extensions.Main import version
 from discord.ext import commands
 from util.core import data, formatter, GitHub
 
@@ -19,6 +18,7 @@ class Statistics(commands.Cog):
 
     @commands.command(name="stats")
     async def stats(self, ctx):
+        from extensions.Main import version
         fetching = await ctx.send(**em(content="Fetching data!\nPlease wait..."))
         first = time.perf_counter()
         await ctx.trigger_typing()
