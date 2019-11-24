@@ -29,7 +29,7 @@ def average(amounts):
 
 
 def parsing(ctx, message):
-    parsed_data = ''
+    parsed_data = message
     operators = [("author", f"{ctx.author.name}#{ctx.author.discriminator}"),
                  ("author.name", ctx.author.name),
                  ("author.discriminator", ctx.author.discriminator),
@@ -48,7 +48,7 @@ def parsing(ctx, message):
                  ("author.mention", ctx.author.mention),
                  ("author.int_color", ctx.author.color.value)]
     for operator in operators:
-        parsed_data = message.replace("{" + str(operator[0]) + "}", str(operator[1]))
+        parsed_data = parsed_data.replace("{" + str(operator[0]) + "}", str(operator[1]))
     return parsed_data
 
 
