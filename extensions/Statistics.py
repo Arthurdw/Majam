@@ -20,14 +20,15 @@ class Statistics(commands.Cog):
     @commands.command(name="stats")
     async def stats(self, ctx):
         fetching = await ctx.send(**em(content="Fetching data!\nPlease wait..."))
-        global_message, global_commands = data.get_stats("messages")[0][0], data.get_stats("command")[0][0]
-        global_custom_commands = data.get_stats("custom-command")[0][0]
-        custom_commands = len(data.fetch_all(config["DATABASE"]["commandsDB"]))
-        guilds, members = str(len(self.bot.guilds)), str(len(set(self.bot.get_all_members())) - 1)
-        uptime = str(datetime.timedelta(seconds=int(round(time.time() - start))))
         first = time.perf_counter()
         await ctx.trigger_typing()
         last = time.perf_counter()
+        global_message, global_commands = data.get_stats("messages")[0][0], data.get_stats("command")[0][0]
+        global_custom_commands = data.get_stats("custom-command")[0][0]
+        custom_commands = len(data.fetch_all(config["DATABASE"]["commandsDB"]))
+        auto_roles = len(data.fetch_all(config["DATABASE"]["autoRoleDB"]))
+        guilds, members = str(len(self.bot.guilds)), str(len(set(self.bot.get_all_members())) - 1)
+        uptime = str(datetime.timedelta(seconds=int(round(time.time() - start))))
         latest = GitHub.version()
         if version == latest:
             final_v = f"`{version}` *(latest)*"
@@ -40,6 +41,7 @@ class Statistics(commands.Cog):
                                          f"Members: `{members}`\n"
                                          f"Guilds: `{guilds}`\n"
                                          f"Messages: `{global_message}`\n"
+                                         f"Auto-Roles: `{auto_roles}`\n"
                                          f"Custom commands:  `{custom_commands}`\n"
                                          f"Commands executed: `{global_commands}`\n"
                                          f"Custom Commands executed: `{global_custom_commands}`\n"
