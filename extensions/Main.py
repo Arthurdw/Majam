@@ -114,15 +114,15 @@ class Main(commands.Cog):
     async def say(self, ctx, *, content=None):
         """Embeds a message, you can customize these embeds fully using JSON!"""
         async def send_message(_content):
-            if (str(_content).strip())[:1] == "{" and (str(_content).strip())[-1:] == "}":
-                contents = json.loads(_content)
-                embed = discord.Embed.from_dict(contents)
-                await ctx.send(embed=embed)
-            else:
-                await ctx.send(**em(content))
+            try:
+                await process.processed_embed(ctx, _content)
+            except json.decoder.JSONDecodeError:
+                await ctx.send(**em(process.parsing(ctx, content)))
         if content is None:
             await ctx.send(**em(type_="error",
-                                content="You need to provide something that I can embed!",
+                                content="You need to provide something that I can embed!\nWant to build complex embeds?"
+                                        "\nPlease use [Discord JSON formatting](https://embedbuilder.nadekobot.me/ "
+                                        "\"Discord JSON formatter!\") then!",
                                 title="Missing parameter!"))
         else:
             if ctx.author.guild_permissions.administrator:

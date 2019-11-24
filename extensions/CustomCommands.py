@@ -1,5 +1,7 @@
 import configparser
 import datetime
+import json
+import discord
 from discord import utils
 from discord.ext import commands
 from util.core import data, formatter, process
@@ -44,7 +46,7 @@ class CustomCommands(commands.Cog):
         if len(command) < 11:
             extra = f"\nCreate it using `{utils.escape_mentions(ctx.prefix)}command add " \
                     f"{command} return My amazing command!`"
-        elif not cmd_info:
+        if not cmd_info:
             await ctx.send(**em(content=f"This server doesnt have this custom command right now!{extra}"))
         else:
             raw_creation_date = datetime.datetime.strptime(cmd_info[0][0], '%Y-%m-%d %H:%M:%S.%f')
@@ -227,7 +229,10 @@ class CustomCommands(commands.Cog):
             output = process.parsed(ctx)
             if output is not None:
                 data.add_stats("custom-command")
-                await ctx.send(**em(output))
+                try:
+                    await process.processed_embed(ctx, output)
+                except json.decoder.JSONDecodeError:
+                    await ctx.send(**em(process.parsing(ctx, output)))
 
 
 def setup(bot):
