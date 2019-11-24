@@ -30,8 +30,8 @@ class Report(commands.Cog):
                                         "Please try again with a valid command!"))
             ctx.command.reset_cooldown(ctx)
         else:
-            data.add_report_count()
-            count = data.get_report_count()[0][0]
+            data.add_stats("reports")
+            count = data.get_stats("reports")
             await report_channel.send(**em(title=f"Report: #{count}:",
                                            content=f"**Command**: `{str(command).lower()}`\n"
                                                    f"**Author**: {ctx.author.mention} ({ctx.author.id})\n"

@@ -69,77 +69,22 @@ def db_add(db, table, table_values, parameters, questions):
 #   STATISTICS   #
 ##################
 
-
-def get_report_count():
-    """Gets the reported commands count!"""
+def get_stats(stats):
+    """Gets something from the stats DB!"""
     return db_get(db=commandConfig["DATABASE"]["stats"],
                   table="global",
                   table_values="(type string, amount int)",
-                  exe=f"SELECT amount FROM global WHERE type = 'reports'")
+                  exe=f"SELECT amount FROM global WHERE type = '{stats}'")
 
 
-def add_report_count():
-    """Adds to the reported command count!"""
-    _commands = get_report_count()[0][0] + 1
+def add_stats(stats):
+    """Add stats to the stats DB!"""
+    _commands = get_stats(stats)[0][0] + 1
     db_update(db=commandConfig["DATABASE"]["stats"],
               table="global",
               table_values="(type string, amount int)",
               parameters=_commands,
-              exe=f"SET amount = {_commands} WHERE type = 'reports'")
-
-
-def get_global_command_count():
-    """Gets the global command count!"""
-    return db_get(db=commandConfig["DATABASE"]["stats"],
-                  table="global",
-                  table_values="(type string, amount int)",
-                  exe=f"SELECT amount FROM global WHERE type = 'command'")
-
-
-def add_global_command_count():
-    """Adds a command to the total command count!"""
-    _commands = get_global_command_count()[0][0] + 1
-    db_update(db=commandConfig["DATABASE"]["stats"],
-              table="global",
-              table_values="(type string, amount int)",
-              parameters=_commands,
-              exe=f"SET amount = {_commands} WHERE type = 'command'")
-
-
-def get_global_custom_command_count():
-    """Gets the global custom command message count!"""
-    return db_get(db=commandConfig["DATABASE"]["stats"],
-                  table="global",
-                  table_values="(type string, amount int)",
-                  exe=f"SELECT amount FROM global WHERE type = 'custom-command'")
-
-
-def add_global_custom_command_count():
-    """Adds a command to the total custom command count!"""
-    _commands = get_global_custom_command_count()[0][0] + 1
-    db_update(db=commandConfig["DATABASE"]["stats"],
-              table="global",
-              table_values="(type string, amount int)",
-              parameters=_commands,
-              exe=f"SET amount = {_commands} WHERE type = 'custom-command'")
-
-
-def get_global_message_count():
-    """Gets the total amount of messages that were sent!"""
-    return db_get(db=commandConfig["DATABASE"]["stats"],
-                  table="global",
-                  table_values="(type string, amount int)",
-                  exe=f"SELECT amount FROM global WHERE type = 'messages'")
-
-
-def add_global_message_count():
-    """Adds a command to the total message count!"""
-    messages = get_global_message_count()[0][0] + 1
-    db_update(db=commandConfig["DATABASE"]["stats"],
-              table="global",
-              table_values="(type string, amount int)",
-              parameters=messages,
-              exe=f"SET amount = {messages} WHERE type = 'messages'")
+              exe=f"SET amount = {_commands} WHERE type = '{stats}'")
 
 
 ##################

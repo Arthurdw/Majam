@@ -18,12 +18,10 @@ class Statistics(commands.Cog):
 
     @commands.command(name="stats")
     async def stats(self, ctx):
-        global_message = data.get_global_message_count()[0][0]
-        global_commands = data.get_global_command_count()[0][0]
-        global_custom_commands = data.get_global_custom_command_count()[0][0]
+        global_message, global_commands = data.get_stats("messages")[0][0], data.get_stats("command")[0][0]
+        global_custom_commands = data.get_stats("custom-command")[0][0]
         custom_commands = len(data.fetch_all(config["DATABASE"]["commandsDB"]))
-        guilds = str(len(self.bot.guilds))
-        members = str(len(set(self.bot.get_all_members())) - 1)
+        guilds, members = str(len(self.bot.guilds)), str(len(set(self.bot.get_all_members())) - 1)
         uptime = str(datetime.timedelta(seconds=int(round(time.time() - start))))
         first = time.perf_counter()
         await ctx.trigger_typing()
@@ -44,25 +42,23 @@ class Statistics(commands.Cog):
 
     @commands.command(name="uptime")
     async def uptime(self, ctx):
-        uptime = str(datetime.timedelta(seconds=int(round(time.time() - start))))
-        await ctx.send(**em(content=f"Uptime: `{uptime}`"))
+        await ctx.send(**em(content=f"Uptime: `{str(datetime.timedelta(seconds=int(round(time.time() - start))))}`"))
 
     @commands.command(name="ping")
     async def ping(self, ctx):
         first = time.perf_counter()
         await ctx.trigger_typing()
         last = time.perf_counter()
-        response_time = round((last-first)*1000, 2)
         await ctx.send(**em(content=f"Latency: `{round(self.bot.latency * 1000, 2)}` ms\n"
-                                    f"Response Time: `{response_time}` ms\n\n"))
+                                    f"Response Time: `{round((last-first)*1000, 2)}` ms\n\n"))
 
     @commands.Cog.listener()
     async def on_message(self, message):
         ctx = await self.bot.get_context(message)
         if ctx.valid:
-            data.add_global_command_count()
+            data.add_stats("command")
         else:
-            data.add_global_message_count()
+            data.add_stats("messages")
 
 
 def setup(bot):

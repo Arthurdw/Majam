@@ -226,7 +226,7 @@ class CustomCommands(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             output = process.parsed(ctx)
             if output is not None:
-                data.add_global_custom_command_count()
+                data.add_stats("custom-command")
                 await ctx.send(**em(output))
 
 
