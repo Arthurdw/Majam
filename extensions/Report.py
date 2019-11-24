@@ -31,7 +31,7 @@ class Report(commands.Cog):
             ctx.command.reset_cooldown(ctx)
         else:
             data.add_stats("reports")
-            count = data.get_stats("reports")
+            count = data.get_stats("reports")[0][0]
             await report_channel.send(**em(title=f"Report: #{count}:",
                                            content=f"**Command**: `{str(command).lower()}`\n"
                                                    f"**Author**: {ctx.author.mention} ({ctx.author.id})\n"
