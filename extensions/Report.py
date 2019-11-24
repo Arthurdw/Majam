@@ -32,15 +32,15 @@ class Report(commands.Cog):
         else:
             data.add_stats("reports")
             count = data.get_stats("reports")[0][0]
-            await report_channel.send(**em(title=f"Report: #{count}:",
-                                           content=f"**Command**: `{str(command).lower()}`\n"
-                                                   f"**Author**: {ctx.author.mention} ({ctx.author.id})\n"
-                                                   f"**Message**:\n```\n{str(message).lower().capitalize()}\n```"))
+            _re_l = await report_channel.send(**em(title=f"Report: #{count}:",
+                                                   content=f"**Command**: `{str(command).lower()}`\n"
+                                                           f"**Author**: {ctx.author.mention} ({ctx.author.id})\n"
+                                                           f"**Message**:\n```\n{str(message).lower().capitalize()}\n```"))
             await ctx.send(**em(title="Success!",
                                 content=f"Successfully send a report for the command: `{str(command).lower()}`!\n"
                                         f"Report message:\n```\n{str(message).lower().capitalize()}\n```\n"
                                         "*(Find your report in [#report](https://discord.gg/P29AqVa \"Alexi's discord"
-                                        f" bot support server!\"), report: #{count})*"))
+                                        f" bot support server!\") [[#{count}]({_re_l.jump_url} \"#{count} report\")])*"))
 
 
 def setup(bot):

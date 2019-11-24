@@ -1,7 +1,7 @@
 import traceback
 import sys
 from datetime import timedelta
-from util.core import formatter
+from util.core import formatter, data
 from discord.ext import commands as cmd
 
 em = formatter.embed_message
@@ -79,11 +79,26 @@ class Errors(cmd.Cog):
             if isinstance(error, cmd.CommandError):
                 await ctx.send(**em(str(error), type_="error"))
             else:
-                traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+                count = data.get_stats("reports")[0][0] + 1
+                report_channel = self.bot.get_channel(648076773417943047)
+                rep = await report_channel.send(**em(title=f"Report: #{count}:",
+                                                     content=f"**Command**: `{str(ctx.command.name).lower()}`\n"
+                                                             f"**Author**: __Auto-Report__\n"
+                                                             f"**Error**:\n```\n{error}\n```"))
                 try:
-                    await ctx.send(**em(error, type_="unex_error"))
-                except:
-                    pass
+                    await ctx.send(**em(error, type_="unex_error", extra=f"[#{count}]({rep.jump_url} "
+                                                                         f"\"Auto-Report\")"))
+                except Exception as e:
+                    print(e)
+                finally:
+                    data.add_stats("reports")
+                    _exception = traceback.format_exception(type(error), error, error.__traceback__)
+                    exception = ""
+                    for item in _exception:
+                        exception += item + '\n'
+                    error_channel = self.bot.get_channel(648222972213198859)
+                    await error_channel.send(**em(title=f"Report: #{count}",
+                                                  content=f"**Error:** \n```{exception}```"))
 
 
 def setup(bot):

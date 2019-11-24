@@ -6,12 +6,13 @@ from util.embed_types import message_types as types
 
 
 def embed_message(content=None, title=None, type_=None, footer=True,
-                  color=None, footer_icon=None, footer_message=None, image=None):
+                  color=None, footer_icon=None, footer_message=None, image=None, extra=None):
     embed_title, embed_content, embed_icon, embed_color = types.get(type_)
+    emb_content = embed_content.format(emb_content=content, e=extra)
     title = title or embed_title
     color = color or embed_color or discord.Color(int(hex(random.randint(0, 16581375)), 0))
     embed = discord.Embed(title=title, color=color or discord.Color(random.randint(0, 16581375)),
-                          description=embed_content.format(emb_content=content))
+                          description=emb_content)
     if image is not None:
         embed.set_image(url=image)
     if footer:
