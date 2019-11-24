@@ -1,8 +1,9 @@
 import configparser
 import time
 import datetime
+from extensions.Main import version
 from discord.ext import commands
-from util.core import data, formatter, process
+from util.core import data, formatter, GitHub
 
 average_latency = []
 em = formatter.embed_message
@@ -18,6 +19,7 @@ class Statistics(commands.Cog):
 
     @commands.command(name="stats")
     async def stats(self, ctx):
+        fetching = await ctx.send(**em(content="Fetching data!\nPlease wait..."))
         global_message, global_commands = data.get_stats("messages")[0][0], data.get_stats("command")[0][0]
         global_custom_commands = data.get_stats("custom-command")[0][0]
         custom_commands = len(data.fetch_all(config["DATABASE"]["commandsDB"]))
@@ -26,19 +28,25 @@ class Statistics(commands.Cog):
         first = time.perf_counter()
         await ctx.trigger_typing()
         last = time.perf_counter()
+        latest = GitHub.version()
+        if version == latest:
+            final_v = f"`{version}` *(latest)*"
+        else:
+            final_v = f"`{version}` *(old)*\nLatest version: `{latest}` *(Restart may occur soon!)*"
         response_time = round((last-first)*1000, 2)
-        await ctx.send(**em(title="Statistics:",
-                            content="**Bot:**\n"
-                                    f"Uptime: `{uptime}`\n"
-                                    f"Members: `{members}`\n"
-                                    f"Guilds: `{guilds}`\n"
-                                    f"Messages: `{global_message}`\n"
-                                    f"Custom commands:  `{custom_commands}`\n"
-                                    f"Commands executed: `{global_commands}`\n"
-                                    f"Custom Commands executed: `{global_custom_commands}`\n\n"
-                                    f"**Ping:**\n"
-                                    f"Latency: `{round(self.bot.latency * 1000, 2)}` ms\n"
-                                    f"Response Time: `{response_time}` ms\n\n"))
+        await fetching.edit(**em(title="Statistics:",
+                                 content="**Bot:**\n"
+                                         f"Uptime: `{uptime}`\n"
+                                         f"Members: `{members}`\n"
+                                         f"Guilds: `{guilds}`\n"
+                                         f"Messages: `{global_message}`\n"
+                                         f"Custom commands:  `{custom_commands}`\n"
+                                         f"Commands executed: `{global_commands}`\n"
+                                         f"Custom Commands executed: `{global_custom_commands}`\n"
+                                         f"Version: {final_v}\n\n"
+                                         f"**Ping:**\n"
+                                         f"Latency: `{round(self.bot.latency * 1000, 2)}` ms\n"
+                                         f"Response Time: `{response_time}` ms\n\n"))
 
     @commands.command(name="uptime")
     async def uptime(self, ctx):
