@@ -56,7 +56,7 @@ class CustomCommands(commands.Cog):
                                         f"Command: `{cmd_info[0][3]}`\n"
                                         f"Author: <@{cmd_info[0][2]}>\n"
                                         f"Guild: `{guild.name}`\n"
-                                        f"Raw response: `{str(cmd_info[0][4]).replace('`', '´')}`\n"))
+                                        f"Raw response: ```{str(cmd_info[0][4]).replace('`', '´')}```\n"))
 
     @commands.guild_only()
     @command.command(name='list')
@@ -213,7 +213,7 @@ class CustomCommands(commands.Cog):
                     data.add_command(ctx.message.guild.id, ctx.message.author.id, name, response)
                     await ctx.send(**em(content="Successfully created a command with the following specifications:\n"
                                                 f"Name: `{name}`\n"
-                                                f"Response: `{str(response).replace('`', '´')}`"))
+                                                f"Response: ```{str(response).replace('`', '´')}```"))
             else:
                 response = data.get_response(ctx.message.guild.id, name).replace('`', '´')
                 await ctx.send(**em(type_="error",
