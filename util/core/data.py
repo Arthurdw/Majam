@@ -70,6 +70,24 @@ def db_add(db, table, table_values, parameters, questions):
 ##################
 
 
+def get_report_count():
+    """Gets the reported commands count!"""
+    return db_get(db=commandConfig["DATABASE"]["stats"],
+                  table="global",
+                  table_values="(type string, amount int)",
+                  exe=f"SELECT amount FROM global WHERE type = 'reports'")
+
+
+def add_report_count():
+    """Adds to the reported command count!"""
+    _commands = get_report_count()[0][0] + 1
+    db_update(db=commandConfig["DATABASE"]["stats"],
+              table="global",
+              table_values="(type string, amount int)",
+              parameters=_commands,
+              exe=f"SET amount = {_commands} WHERE type = 'reports'")
+
+
 def get_global_command_count():
     """Gets the global command count!"""
     return db_get(db=commandConfig["DATABASE"]["stats"],

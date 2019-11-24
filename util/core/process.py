@@ -1,4 +1,10 @@
+import string
+import random
 from util.core import formatter, data
+
+
+def generate_string(size=10, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase + '_' + '-'):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
 def average(amounts):

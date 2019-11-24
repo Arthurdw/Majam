@@ -38,12 +38,13 @@ class CustomCommands(commands.Cog):
         (Creation date, server, creator, name, raw response, response)"""
         if command is None:
             await ctx.send(**em(content="Please provide a command that I should show information about!"))
+            return
         cmd_info = data.command_info(ctx.guild.id, command)
         extra = ""
         if len(command) < 11:
             extra = f"\nCreate it using `{utils.escape_mentions(ctx.prefix)}command add " \
                     f"{command} return My amazing command!`"
-        if not cmd_info:
+        elif not cmd_info:
             await ctx.send(**em(content=f"This server doesnt have this custom command right now!{extra}"))
         else:
             raw_creation_date = datetime.datetime.strptime(cmd_info[0][0], '%Y-%m-%d %H:%M:%S.%f')
