@@ -10,11 +10,10 @@ commandConfig.read('config.cfg')
 # GENERAL DB COMMANDS #
 #######################
 
-
-def fetch_all(database: str):
+def fetch_all(database: str, table="servers"):
     connect = sqlite3.connect(database)
     cursor = connect.cursor()
-    command = cursor.execute("SELECT * FROM servers")
+    command = cursor.execute(f"SELECT * FROM {table}")
     fetch = command.fetchall()
     connect.commit()
     connect.close()
@@ -66,8 +65,54 @@ def db_add(db, table, table_values, parameters, questions):
 
 
 ##################
+#     LEVELS     #
+##################
+
+def get_lvl_exp(_id: int, _type: str):
+    """Retrieves the current level & exp from the DB"""
+    return db_get(commandConfig["DATABASE"]["levelDB"],
+                  table="global",
+                  table_values="(id int, exp int, lvl int)",
+                  exe=f"SELECT exp, lvl FROM {_type} WHERE id = {_id}")
+
+
+def add_lvl_exp(_id: int, amount: int, _type: str, sub_type: str):
+    """Adds a level or exp to the db!
+    (tables: servers, users)"""
+    connect = sqlite3.connect(commandConfig["DATABASE"]["levelDB"])
+    cursor = connect.cursor()
+    try:
+        cursor.execute(f"SELECT * FROM {_type} WHERE id = {_id}")
+    except sqlite3.OperationalError as e:
+        cursor.execute(f"CREATE TABLE {_type} (id int, exp int, lvl int)")
+    if not get_lvl_exp(_id, _type):
+        db_add(db=commandConfig["DATABASE"]["levelDB"],
+               table=_type,
+               table_values="(id int, exp int, lvl int)",
+               parameters=(_id, amount, 0),
+               questions="(?, ?, ?)")
+    elif sub_type == "exp":
+        exp = get_lvl_exp(_id, _type)[0][0] + amount
+        db_update(db=commandConfig["DATABASE"]["stats"],
+                  table=_type,
+                  table_values="(id int, exp int, lvl int)",
+                  parameters=exp,
+                  exe=f"SET exp = {exp} WHERE id = {_id}")
+    elif sub_type == "lvl":
+        level = get_lvl_exp(_id, _type)[0][1] + amount
+        db_update(db=commandConfig["DATABASE"]["stats"],
+                  table=_type,
+                  table_values="(id int, exp int, lvl int)",
+                  parameters=level,
+                  exe=f"SET lvl = {level} WHERE id = {_id}")
+    connect.commit()
+    connect.close()
+    print('donefro')
+
+##################
 #   STATISTICS   #
 ##################
+
 
 def get_stats(stats):
     """Gets something from the stats DB!"""
@@ -208,7 +253,7 @@ def set_prefix(server_id, author, prefix):
     except sqlite3.OperationalError as e:
         cursor.execute("CREATE TABLE servers (date blob, server_id int, creator_id int, prefix text)")
     parameters = (datetime.datetime.now(), server_id, author, prefix)
-    cursor.execute(f"DELETE FROM servers WHERE server_id = {server_id}")
+    cursor.execute(f"DELETE FROM servers WHERE id = {server_id}")
     cursor.execute("INSERT INTO servers VALUES (?, ?, ?, ?)", parameters)
     connect.commit()
     connect.close()

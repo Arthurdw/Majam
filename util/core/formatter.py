@@ -6,7 +6,7 @@ from util.embed_types import message_types as types
 
 
 def embed_message(content=None, title=None, type_=None, footer=True,
-                  color=None, footer_icon=None, footer_message=None, image=None, extra=None):
+                  color=None, footer_icon=None, footer_message=None, image=None, extra=None, author=None):
     embed_title, embed_content, embed_icon, embed_color = types.get(type_)
     emb_content = embed_content.format(emb_content=content, e=extra)
     title = title or embed_title
@@ -15,6 +15,8 @@ def embed_message(content=None, title=None, type_=None, footer=True,
                           description=emb_content)
     if image is not None:
         embed.set_image(url=image)
+    if author is not None:
+        embed.set_author(name=author[0], url=author[1], icon_url=author[2])
     if footer:
         if footer_message is None:
             config = configparser.ConfigParser()
