@@ -64,7 +64,7 @@ class DiscordBotsOrgAPI(commands.Cog):
                                         f'**Prefix:** `{bot_info["prefix"]}`\n'
                                         f'**Upvotes:** `{bot_info["monthlyPoints"]}` *(`{bot_info["points"]}`)*\n'
                                         f'{server_count}**Owner(s):** {owners}\n**Tags:** {tag_list}\n**Libary:**'
-                                        f'{bot_info["library"]}\n**Certified:** '
+                                        f'{bot_info["lib"]}\n**Certified:** '
                                         f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
                                         f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
                                         f"**Extra:**\n{extra_string}"))
