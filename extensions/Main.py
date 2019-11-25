@@ -25,6 +25,7 @@ class Main(commands.Cog):
     @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.command(name="suggest")
     async def suggest(self, ctx, *, suggestion=None):
+        """Suggest a command for the bot!"""
         if suggestion is None:
             await ctx.send(**em(type_="error",
                                 content="You need to provide a suggestion!"))
@@ -34,7 +35,7 @@ class Main(commands.Cog):
         _suggestion = await sg_channel.send(**em(content=f"**Author**: {ctx.author.mention} *({ctx.author.id})*\n"
                                                          f"**Suggestion**:\n```"
                                                          f"{str(suggestion).lower().capitalize().replace('`', '´')}"
-                                                         f"```"))
+                                                         f"```", footer=False))
         await ctx.send(**em(content=f"Successfully send [your suggestion]({_suggestion.jump_url} \"{ctx.author.name}'s "
                                     f"suggestion!\")!"))
         for item in [648250030943240214, 648250031455076352, 648250031198961685]:
