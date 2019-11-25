@@ -43,11 +43,11 @@ class DiscordBotsOrgAPI(commands.Cog):
             extra_string = extra_string.join(params)
             try:
                 count = str(bot_info["server_count"])
-                if not count:
+                if count == "[]":
                     count = "No guilds!"
             except KeyError:
                 count = str(bot_info["guilds"])
-                if not count:
+                if count == "[]":
                     count = "No guilds!"
             server_count = f"**Server count:** `{count}`\n"
             owner_list = []
@@ -63,7 +63,7 @@ class DiscordBotsOrgAPI(commands.Cog):
                                         f'**Short Description:**\n```{bot_info["shortdesc"]}```\n'
                                         f'**Prefix:** `{bot_info["prefix"]}`\n'
                                         f'**Upvotes:** `{bot_info["monthlyPoints"]}` *(`{bot_info["points"]}`)*\n'
-                                        f'{server_count}**Owner(s):** {owners}\n**Tags:** {tag_list}\n**Libary:**'
+                                        f'{server_count}**Owner(s):** {owners}\n**Tags:** {tag_list}\n**Libary:** '
                                         f'{bot_info["lib"]}\n**Certified:** '
                                         f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
                                         f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
