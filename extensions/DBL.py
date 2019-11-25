@@ -36,7 +36,15 @@ class DiscordBotsOrgAPI(commands.Cog):
         if git is not None:
             params.append(f"[Github]({git} \"{bot.name}'s github!\")")
         extra_string = extra_string.join(params)
-        server_count = "**Server count:** `" + str(bot_info["server_count"]) + "`\n" or ""
+        try:
+            count = str(bot_info["server_count"])
+            if not count:
+                count = "No guilds!"
+        except KeyError:
+            count = str(bot_info["guilds"])
+            if not count:
+                count = "No guilds!"
+        server_count = f"**Server count:** `{count}`\n"
         owner_list = []
         owners = ", "
         tag_list = ", "
@@ -55,10 +63,6 @@ class DiscordBotsOrgAPI(commands.Cog):
                                     f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
                                     f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
                                     f"**Extra:**\n{extra_string}"))
-
-        # print("Userinfo:" + str(await self.dblpy.get_user_info(ctx.author.id)) + "\n")
-        # print("Bot upvo:" + str(await self.dblpy.get_bot_upvotes()) + "\n")
-        # print(await self.dblpy.get_user_vote(ctx.author.id))
 
 
 def setup(bot):
