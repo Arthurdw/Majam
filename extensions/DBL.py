@@ -27,7 +27,8 @@ class DiscordBotsOrgAPI(commands.Cog):
         bot_info = await self.dblpy.get_bot_info(bot.id)
         web, support, git = bot_info["website"], bot_info["support"], bot_info["github"]
         extra_string = " | "
-        params = [f'[Invite]({bot_info["invite"]} "Invite {bot}")']
+        params = [f'[Vote](https://top.gg/bot/{bot.id}/vote "Vote for {bot}")',
+                  f'[Invite]({bot_info["invite"]} "Invite {bot}")']
         if web is not None:
             params.append(f"[Website]({web} \"{bot.name}'s website!\")")
         if support is not None:
@@ -43,7 +44,7 @@ class DiscordBotsOrgAPI(commands.Cog):
         for owner in bot_info["owners"]:
             owner_list.append(f"<@{owner}>")
         owners = owners.join(owner_list)
-        await ctx.send(**em(author=(bot.name, 'https://top.gg/bot/{bot.id}', bot.avatar_url),
+        await ctx.send(**em(author=(bot.name, f'https://top.gg/bot/{bot.id}', bot.avatar_url),
                             title="Bot info:",
                             content=f'**Bot:** {bot_info["username"]}#{bot_info["discriminator"]} *({bot_info["id"]})*\n'
                                     f'**Short Description:**\n```{bot_info["shortdesc"]}```\n'
