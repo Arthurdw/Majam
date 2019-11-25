@@ -5,6 +5,7 @@ import glob
 import discord
 import sqlite3
 import ast
+import time
 from discord.ext import commands
 from util.core import data, formatter, checks, GitHub, process
 
@@ -187,32 +188,40 @@ class Main(commands.Cog):
         a
         ```
         """
-        fn_name = "_eval_expr"
+        try:
+            first = time.perf_counter()
+            fn_name = "_eval_expr"
 
-        cmd = cmd.strip("` ")
+            cmd = cmd.strip("` ")
 
-        # add a layer of indentation
-        cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
+            # add a layer of indentation
+            cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
 
-        # wrap in async def body
-        body = f"async def {fn_name}():\n{cmd}"
+            # wrap in async def body
+            body = f"async def {fn_name}():\n{cmd}"
 
-        parsed = ast.parse(body)
-        body = parsed.body[0].body
+            parsed = ast.parse(body)
+            body = parsed.body[0].body
 
-        self.insert_returns(body)
+            self.insert_returns(body)
 
-        env = {
-            'bot': ctx.bot,
-            'discord': discord,
-            'commands': commands,
-            'ctx': ctx,
-            '__import__': __import__
-        }
-        exec(compile(parsed, filename="<ast>", mode="exec"), env)
+            env = {
+                'bot': ctx.bot,
+                'discord': discord,
+                'commands': commands,
+                'ctx': ctx,
+                '__import__': __import__
+            }
+            exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
-        result = (await eval(f"{fn_name}()", env))
-        await ctx.send(result)
+            result = (await eval(f"{fn_name}()", env))
+            last = time.perf_counter()
+            await ctx.send(**em(title="Eval:",
+                                content=f"**Input:**\n```{cmd}```\n**Output:**```{result}```\nTook "
+                                        f"`{round((last-first)*1000, 2)}ms`!"))
+        except Exception as e:
+            await ctx.send(**em(type_="error",
+                                content=e))
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):

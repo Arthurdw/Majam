@@ -24,45 +24,52 @@ class DiscordBotsOrgAPI(commands.Cog):
 
     @commands.command(name="dbl")
     async def dbl(self, ctx, bot: discord.Member = None):
-        bot_info = await self.dblpy.get_bot_info(bot.id)
-        web, support, git = bot_info["website"], bot_info["support"], bot_info["github"]
-        extra_string = " | "
-        params = [f'[Vote](https://top.gg/bot/{bot.id}/vote "Vote for {bot}")',
-                  f'[Invite]({bot_info["invite"]} "Invite {bot}")']
-        if web is not None:
-            params.append(f"[Website]({web} \"{bot.name}'s website!\")")
-        if support is not None:
-            params.append(f"[Support Server](https://discord.gg/{support} \"{bot.name}'s support server!\")")
-        if git is not None:
-            params.append(f"[Github]({git} \"{bot.name}'s github!\")")
-        extra_string = extra_string.join(params)
+        if not bot.bot:
+            await ctx.send(**em(content="Ehmm.\nThis **USER** is not listed on DBL...\n\nWait wut, user? Why you want "
+                                        "to get bot information from a user lol!?"))
+            return
         try:
-            count = str(bot_info["server_count"])
-            if not count:
-                count = "No guilds!"
-        except KeyError:
-            count = str(bot_info["guilds"])
-            if not count:
-                count = "No guilds!"
-        server_count = f"**Server count:** `{count}`\n"
-        owner_list = []
-        owners = ", "
-        tag_list = ", "
-        tag_list = tag_list.join(bot_info['tags'])
-        for owner in bot_info["owners"]:
-            owner_list.append(f"<@{owner}>")
-        owners = owners.join(owner_list)
-        await ctx.send(**em(author=(bot.name, f'https://top.gg/bot/{bot.id}', bot.avatar_url),
-                            title="Bot info:",
-                            content=f'**Bot:** {bot_info["username"]}#{bot_info["discriminator"]} *({bot_info["id"]})*\n'
-                                    f'**Short Description:**\n```{bot_info["shortdesc"]}```\n'
-                                    f'**Prefix:** `{bot_info["prefix"]}`\n'
-                                    f'**Upvotes:** `{bot_info["monthlyPoints"]}` *(`{bot_info["points"]}`)*\n'
-                                    f'{server_count}**Owner(s):** {owners}\n**Tags:** {tag_list}\n'
-                                    f'**Certified:** '
-                                    f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
-                                    f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
-                                    f"**Extra:**\n{extra_string}"))
+            bot_info = await self.dblpy.get_bot_info(bot.id)
+            web, support, git = bot_info["website"], bot_info["support"], bot_info["github"]
+            extra_string = " | "
+            params = [f'[Vote](https://top.gg/bot/{bot.id}/vote "Vote for {bot}")',
+                      f'[Invite]({bot_info["invite"]} "Invite {bot}")']
+            if web is not None:
+                params.append(f"[Website]({web} \"{bot.name}'s website!\")")
+            if support is not None:
+                params.append(f"[Support Server](https://discord.gg/{support} \"{bot.name}'s support server!\")")
+            if git is not None:
+                params.append(f"[Github]({git} \"{bot.name}'s github!\")")
+            extra_string = extra_string.join(params)
+            try:
+                count = str(bot_info["server_count"])
+                if not count:
+                    count = "No guilds!"
+            except KeyError:
+                count = str(bot_info["guilds"])
+                if not count:
+                    count = "No guilds!"
+            server_count = f"**Server count:** `{count}`\n"
+            owner_list = []
+            owners = ", "
+            tag_list = ", "
+            tag_list = tag_list.join(bot_info['tags'])
+            for owner in bot_info["owners"]:
+                owner_list.append(f"<@{owner}>")
+            owners = owners.join(owner_list)
+            await ctx.send(**em(author=(bot.name, f'https://top.gg/bot/{bot.id}', bot.avatar_url),
+                                title="Bot info:",
+                                content=f'**Bot:** {bot_info["username"]}#{bot_info["discriminator"]} *({bot_info["id"]})*\n'
+                                        f'**Short Description:**\n```{bot_info["shortdesc"]}```\n'
+                                        f'**Prefix:** `{bot_info["prefix"]}`\n'
+                                        f'**Upvotes:** `{bot_info["monthlyPoints"]}` *(`{bot_info["points"]}`)*\n'
+                                        f'{server_count}**Owner(s):** {owners}\n**Tags:** {tag_list}\n**Libary:**'
+                                        f'{bot_info["library"]}\n**Certified:** '
+                                        f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
+                                        f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
+                                        f"**Extra:**\n{extra_string}"))
+        except dbl.errors.NotFound:
+            await ctx.send(**em("This bot isn't listed on DBL! *(yet?)*"))
 
 
 def setup(bot):
