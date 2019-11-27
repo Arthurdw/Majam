@@ -98,7 +98,8 @@ class Errors(cmd.Cog):
                         exception += item + '\n'
                     error_channel = self.bot.get_channel(648222972213198859)
                     await error_channel.send(**em(title=f"Report: #{count}",
-                                                  content=f"**Error:** \n```{exception}```"))
+                                                  content=f"**Executable:** `{ctx.message.content}"
+                                                          f"`\n**Error:** \n```{exception}```"))
 
 
 def setup(bot):
