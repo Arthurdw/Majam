@@ -28,6 +28,9 @@ class DiscordBotsOrgAPI(commands.Cog):
             await ctx.send(**em(content="Ehmm.\nThis **USER** is not listed on DBL...\n\nWait wut, user? Why you want "
                                         "to get bot information from a user lol!?"))
             return
+        if bot is None:
+            await ctx.send(**em(content="Can't lookup nothing if you provide nothing! :/"))
+            return
         try:
             bot_info = await self.dblpy.get_bot_info(bot.id)
             web, support, git = bot_info["website"], bot_info["support"], bot_info["github"]
