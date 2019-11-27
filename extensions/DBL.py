@@ -49,9 +49,7 @@ class DiscordBotsOrgAPI(commands.Cog):
                 if count == "[]":
                     count = "No guilds!"
             except KeyError:
-                count = str(bot_info["guilds"])
-                if count == "[]":
-                    count = "No guilds!"
+                count = "No guilds!"
             server_count = f"**Server count:** `{count}`\n"
             owner_list = []
             owners = ", "
