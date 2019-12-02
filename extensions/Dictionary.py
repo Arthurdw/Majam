@@ -8,7 +8,7 @@ app = Oxford.Dictionary(app_id="55afa013",
                         app_key="b596812274d2c34d4a353a3e4226af26")
 
 
-class Currency(commands.Cog):
+class Dictionary(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -65,16 +65,13 @@ class Currency(commands.Cog):
                         f"**Short definition:**\n{app.short_definition().capitalize()}",
                         f"**Example:**\n{app.example().capitalize()}",
                         f"**Phonetic:** *({app.phonetic_notation()})*\n`{app.phonetic()}`",
-                        f"** ---- Sub-Definition ---- **\n{app.sub_definition().capitalize()}",
-                        f"**Short definition:**\n{app.sub_short_definition().capitalize()}",
-                        f"**Example:**\n{app.sub_example().capitalize()}",
                         f"**[AudioFile]({app.audiofile()} \"Audio file spoken in {app.audiofile_dialect()}\")**",
                         "*Provided by [Oxford dictionary](https://en.wikipedia.org/wiki/Oxford_English_Dictionary "
                         "\"Oxford dictionary\")! (using [Pythonary](https://pypi.org/project/pythonary/ "
-                        "\"Pythonary PyPi\")*"]
+                        "\"Pythonary PyPi\"))*"]
             await ctx.send(**em(title=f"Definition: {app.name().capitalize()}",
                                 content=sep.join(full_def)))
 
 
 def setup(bot):
-    bot.add_cog(Currency(bot))
+    bot.add_cog(Dictionary(bot))
