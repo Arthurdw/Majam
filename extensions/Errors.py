@@ -1,5 +1,5 @@
 import traceback
-import sys
+import discord
 from datetime import timedelta
 from util.core import formatter, data
 from discord.ext import commands as cmd
@@ -78,6 +78,8 @@ class Errors(cmd.Cog):
         if catch_all:
             if isinstance(error, cmd.CommandError):
                 await ctx.send(**em(str(error), type_="error"))
+            if isinstance(error, discord.errors.Forbidden):
+                pass
             else:
                 count = data.get_stats("reports")[0][0] + 1
                 report_channel = self.bot.get_channel(648076773417943047)

@@ -286,11 +286,12 @@ class Main(commands.Cog):
         elif process.parsed(ctx) is not None:
             pass
         else:
-            for item in mentions:
-                if item in str(message.content):
-                    prefix = data.get_prefix(bot=self.bot, message=message, db_only=True)
-                    await ctx.send(**em(f"\nCurrent prefix: `{prefix}` or just mention me!"))
-                    break
+            if not ctx.author.bot:
+                for item in mentions:
+                    if item == str(message.content):
+                        prefix = data.get_prefix(bot=self.bot, message=message, db_only=True)
+                        await ctx.send(**em(f"\nCurrent prefix: `{prefix}` or just mention me!"))
+                        break
 
 
 def setup(bot):
