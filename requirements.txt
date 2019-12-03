@@ -2,3 +2,4 @@ pygithub
 discord.py[voice]
 dblpy
 pythonary
+flask

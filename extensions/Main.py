@@ -6,6 +6,7 @@ import discord
 import sqlite3
 import ast
 import time
+import random
 from discord.ext import commands
 from util.core import data, formatter, checks, GitHub, process
 
@@ -22,6 +23,22 @@ class Main(commands.Cog):
     def default(self, ctx):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
+
+    @commands.command(name="trump")
+    async def trump(self, ctx):
+        images = ["https://cdn.discordapp.com/attachments/357495308768247809/651522787692904468/trumpLoL.png",
+                  "https://i.gyazo.com/461e82b5baef8027eb078cb615701dbe.png",
+                  "https://i.gyazo.com/thumb/1200/7a99617b42477843537d37877cc17714-png.jpg",
+                  "https://i.gyazo.com/thumb/1200/02a49305d33760440a21ec9bd430771a-png.jpg",
+                  "https://i.gyazo.com/thumb/1200/7c2a66fd07b10a7c55f9017b2175efc9-png.jpg",
+                  "https://i.gyazo.com/thumb/1200/94197dca4a0836dada12fdb5b3573ed7-png.jpg",
+                  "https://i.gyazo.com/thumb/1200/05f6e5300e007defbd4f8d8aa135b696-png.jpg",
+                  "https://i.gyazo.com/thumb/1200/3978b3f98926d1a73dd02dee31f6f07a-png.jpg",
+                  "https://i.gyazo.com/95beb219d043f686128c18a46691d956.png",
+                  "https://i.gyazo.com/thumb/1200/8bd8fbb7904c223d28ea30335560509d-png.jpg",
+                  "https://i.gyazo.com/4e4b807174df66cdc74a31bbb75cbb84.png"]
+        await ctx.send(**em("Trump be like:",
+                            image=random.choice(images)))
 
     @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.command(name="suggest")
