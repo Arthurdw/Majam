@@ -61,13 +61,26 @@ class Dictionary(commands.Cog):
                                         "try again later!)*"))
         except KeyError:
             sep = "\n\n"
-            full_def = [f"{app.definition().capitalize()}",
-                        f"**Short definition:**\n{app.short_definition().capitalize()}",
-                        f"**Example:**\n{app.example().capitalize()}",
-                        f"**Phonetic:** *({app.phonetic_notation()})*\n`{app.phonetic()}`",
-                        f"**[AudioFile]({app.audiofile()} \"Audio file spoken in {app.audiofile_dialect()}\")**",
+            try: short_def = f"**Short definition:**\n{app.short_definition().capitalize()}"
+            except: short_def = ""
+            try: example = f"**Example:**\n{app.example().capitalize()}",
+            except: example = ""
+            try: etymologies = f"**Etymologies(s):**\n{app.etymologies().capitalize()}"
+            except: etymologies = ""
+            try: phonetic = f"**Phonetic:** *({app.phonetic_notation()})*\n`{app.phonetic()}`"
+            except: phonetic = ""
+            try: sub_def = f"** ---- Sub-Definition ---- **\n{app.sub_definition().capitalize()}"
+            except: sub_def = ""
+            try: sub_short_def = f"**Short definition:**\n{app.sub_short_definition().capitalize()}"
+            except: sub_short_def = ""
+            try: sub_short_example = f"**Example:**\n{app.sub_example().capitalize()}"
+            except: sub_short_example = ""
+            try: audio_file = f"**[AudioFile]({app.audiofile()} \"Audio file spoken in {app.audiofile_dialect()}\")**"
+            except: audio_file = ""
+            full_def = [f"{app.definition().capitalize()}", short_def, example, etymologies, phonetic, sub_def,
+                        sub_short_def, sub_short_example, audio_file,
                         "*Provided by [Oxford dictionary](https://en.wikipedia.org/wiki/Oxford_English_Dictionary "
-                        "\"Oxford dictionary\")! (using [Pythonary](https://pypi.org/project/pythonary/ "
+                        "\"Oxford dictionary\")!\n(using [Pythonary](https://pypi.org/project/pythonary/ "
                         "\"Pythonary PyPi\"))*"]
             await ctx.send(**em(title=f"Definition: {app.name().capitalize()}",
                                 content=sep.join(full_def)))
