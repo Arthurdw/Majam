@@ -22,23 +22,23 @@ class Dictionary(commands.Cog):
         try:
             app.Select(word=str(content).strip().lower())
             sep = "\n\n"
-            try: short_def = f"**Short definition:**\n{app.short_definition().capitalize()}"
+            try: short_def = f"**Short definition:**\n{app.short_definition().capitalize().strip()}"
             except KeyError: short_def = ""
-            try: example = f"**Example:**\n{app.example().capitalize()}",
+            try: example = f"**Example:**\n{app.example().capitalize().strip()}",
             except KeyError: example = ""
-            try: etymologies = f"**Etymologies(s):**\n{app.etymologies().capitalize()}"
+            try: etymologies = f"**Etymologies(s):**\n{app.etymologies().capitalize().strip()}"
             except KeyError: etymologies = ""
-            try: phonetic = f"**Phonetic:** *({app.phonetic_notation()})*\n`{app.phonetic()}`"
+            try: phonetic = f"**Phonetic:** *({app.phonetic_notation().strip()})*\n`{app.phonetic().strip()}`"
             except KeyError: phonetic = ""
-            try: sub_def = f"** ---- Sub-Definition ---- **\n{app.sub_definition().capitalize()}"
+            try: sub_def = f"** ---- Sub-Definition ---- **\n{app.sub_definition().capitalize().strip()}"
             except KeyError: sub_def = ""
-            try: sub_short_def = f"**Short definition:**\n{app.sub_short_definition().capitalize()}"
+            try: sub_short_def = f"**Short definition:**\n{app.sub_short_definition().capitalize().strip()}"
             except KeyError: sub_short_def = ""
-            try: sub_short_example = f"**Example:**\n{app.sub_example().capitalize()}"
+            try: sub_short_example = f"**Example:**\n{app.sub_example().capitalize().strip()}"
             except KeyError: sub_short_example = ""
-            try: audio_file = f"**[AudioFile]({app.audiofile()} \"Audio file spoken in {app.audiofile_dialect()}\")**"
+            try: audio_file = f"**[AudioFile]({app.audiofile().strip()} \"Audio file spoken in {app.audiofile_dialect().strip()}\")**"
             except KeyError: audio_file = ""
-            full_def = [f"{app.definition().capitalize()}", short_def, example, etymologies, phonetic, sub_def,
+            full_def = [f"{app.definition().capitalize().strip()}", short_def, example, etymologies, phonetic, sub_def,
                         sub_short_def, sub_short_example, audio_file,
                         "*Provided by [Oxford dictionary](https://en.wikipedia.org/wiki/Oxford_English_Dictionary "
                         "\"Oxford dictionary\")!\n(using [Pythonary](https://pypi.org/project/pythonary/ "
