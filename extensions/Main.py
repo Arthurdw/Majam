@@ -150,23 +150,30 @@ class Main(commands.Cog):
     @commands.command(name="say")
     async def say(self, ctx, *, content=None):
         """Embeds a message, you can customize these embeds fully using JSON!"""
-        async def send_message(_content):
-            try:
-                await process.processed_embed(ctx, _content)
-            except json.decoder.JSONDecodeError:
-                await ctx.send(**em(process.parsing(ctx, content)))
-        if content is None:
-            await ctx.send(**em(type_="error",
-                                content="You need to provide something that I can embed!\nWant to build complex embeds?"
-                                        "\nPlease use [Discord JSON formatting](https://embedbuilder.nadekobot.me/ "
-                                        "\"Discord JSON formatter!\") then!",
-                                title="Missing parameter!"))
-        else:
+        try:
+            async def send_message(_content):
+                try:
+                    await process.processed_embed(ctx, _content)
+                except json.decoder.JSONDecodeError:
+                    await ctx.send(**em(process.parsing(ctx, content)))
+            if content is None:
+                await ctx.send(**em(type_="error",
+                                    content="You need to provide something that I can embed!\nWant to build complex "
+                                            "embeds?\nPlease use [Discord JSON formatting](https://embedbuilder.nadeko"
+                                            "bot.me/ \"Discord JSON formatter!\") then!",
+                                    title="Missing parameter!"))
+            else:
+                if ctx.author.guild_permissions.administrator:
+                    await send_message(content)
+                else:
+                    content = str(content).replace('@everyone', 'everyone').replace('@here', 'here')
+                    await send_message(content)
+        except discord.errors.HTTPException:
             if ctx.author.guild_permissions.administrator:
-                await send_message(content)
+                await ctx.send(**em(content=content))
             else:
                 content = str(content).replace('@everyone', 'everyone').replace('@here', 'here')
-                await send_message(content)
+                await ctx.send(**em(content=content))
 
     def insert_returns(self, body):
         # insert return stmt if the last expression is a expression statement
