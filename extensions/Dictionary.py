@@ -36,10 +36,12 @@ class Dictionary(commands.Cog):
             except KeyError: sub_short_def = ""
             try: sub_short_example = f"**Example:**\n{app.sub_example().capitalize().strip()}"
             except KeyError: sub_short_example = ""
-            try: audio_file = f"**[AudioFile]({app.audiofile().strip()} \"Audio file spoken in {app.audiofile_dialect().strip()}\")**"
+            try:
+                audio_file = f"**[AudioFile]({app.audiofile().strip()} \"Audio file spoken in " \
+                              f"{app.audiofile_dialect().strip()}\")**"
             except KeyError: audio_file = ""
-            full_def = [f"{app.definition().capitalize().strip()}", short_def, example, etymologies, phonetic, sub_def,
-                        sub_short_def, sub_short_example, audio_file,
+            full_def = [f"{app.definition().capitalize().strip()}", str(short_def), str(example), str(etymologies),
+                        str(phonetic), str(sub_def), str(sub_short_def), str(sub_short_example), str(audio_file),
                         "*Provided by [Oxford dictionary](https://en.wikipedia.org/wiki/Oxford_English_Dictionary "
                         "\"Oxford dictionary\")!\n(using [Pythonary](https://pypi.org/project/pythonary/ "
                         "\"Pythonary PyPi\"))*"]
