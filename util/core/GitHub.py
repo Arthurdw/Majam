@@ -6,8 +6,8 @@ token = configparser.ConfigParser()
 token.read("token.cfg")
 g = Github(token["GIT"]["secret"])
 
-# Select Alexi Repo:
-alexi_repo = g.get_repo("Arthurdw/Alexi")
+# Select Majam Repo:
+alexi_repo = g.get_repo("Arthurdw/Majam")
 
 
 def version():

@@ -1,9 +1,9 @@
-class Alexi(Exception):
-    """Base exception class for Alexi"""
+class Majam(Exception):
+    """Base exception class for Majam"""
     pass
 
 
-class UnknownError(Alexi):
+class UnknownError(Majam):
     """When an unknown exception occurs, this should never happen!"""
     pass
 

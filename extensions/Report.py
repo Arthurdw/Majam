@@ -39,7 +39,7 @@ class Report(commands.Cog):
             await ctx.send(**em(title="Success!",
                                 content=f"Successfully send a report for the command: `{str(command).lower()}`!\n"
                                         f"Report message:\n```\n{str(message).lower().capitalize()}\n```\n"
-                                        "*(Find your report in [#report](https://discord.gg/P29AqVa \"Alexi's discord"
+                                        "*(Find your report in [#report](https://discord.gg/P29AqVa \"Majam's discord"
                                         f" bot support server!\") [[#{count}]({_re_l.jump_url} \"#{count} report\")])*"))
 
 

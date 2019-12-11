@@ -39,7 +39,7 @@ def db_update(db, table, table_values, parameters=None, exe=None, instant_insert
     cursor = connect.cursor()
     try:
         cursor.execute(f"SELECT * FROM {table}")
-    except sqlite3.OperationalError as e:
+    except sqlite3.OperationalError:
         cursor.execute(f"CREATE TABLE {table} {table_values}")
     try:
         if instant_insert:
@@ -109,9 +109,38 @@ def add_lvl_exp(_id: int, amount: int, _type: str, sub_type: str):
     connect.close()
     print('donefro')
 
+##############
+#   VOTING   #
+##############
+
+# can only concatenate tuple (not "int") to tuple
+
+
+def add_vote(user_id: int):
+    """"Updates the vote-list."""
+    count = db_get(db=commandConfig["DATABASE"]["voteDB"],
+                   table="list",
+                   table_values="(user_id int, date blob, count int)",
+                   exe=f"SELECT count FROM list WHERE user_id = {user_id}")
+    if not count:
+        db_add(db=commandConfig["DATABASE"]["voteDB"],
+               table="list",
+               table_values="(user_id int, date blob, count int)",
+               parameters=(user_id, datetime.datetime.now(), 1),
+               questions="(?, ?, ?)")
+    else:
+        connect = sqlite3.connect(commandConfig["DATABASE"]["voteDB"])
+        cursor = connect.cursor()
+        cursor.execute(f"SELECT * FROM list")
+        cursor.execute(f"UPDATE list SET date = {datetime.datetime.now()}, count = {count[0][0] + 1} "
+                       f"WHERE user_id = {user_id}")
+        connect.commit()
+        connect.close()
+
+
 ##################
 #   STATISTICS   #
-##################
+#################
 
 
 def get_stats(stats):

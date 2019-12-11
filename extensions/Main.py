@@ -63,21 +63,21 @@ class Main(commands.Cog):
     async def docs(self, ctx):
         """Retrieve the link to the documentation!"""
         await ctx.send(**em(title="Docs:",
-                            content=f"Web Docs: [Commands]({config['DOCS']['webDocs']} \"Alexi's Website DOCS\")\n"
-                                    f"Raw Docs: [AlexiRaw]({config['DOCS']['rawDocs']} \"Alexi Raw Docs\")"))
+                            content=f"Web Docs: [Commands]({config['DOCS']['webDocs']} \"Majam's Website DOCS\")\n"
+                                    f"Raw Docs: [MajamRaw]({config['DOCS']['rawDocs']} \"Majam Raw Docs\")"))
 
     @commands.command(name="invite")
     async def invite(self, ctx):
-        """Retrieve a link to invite Alexi!"""
-        await ctx.send(**em(content="Invite __**[Alexi](https://discordapp.com/api/oauth2/authorize?"
+        """Retrieve a link to invite Majam!"""
+        await ctx.send(**em(content="Invite __**[Majam](https://discordapp.com/api/oauth2/authorize?"
                                     "client_id=634141001769943090&permissions=8&scope=bot "
                                     "\"Invite me please :D\")**__"))
 
     @commands.command(name="support")
     async def support(self, ctx):
-        """Retrieve a link to the Alexi support server!"""
+        """Retrieve a link to the Majam support server!"""
         await ctx.send(**em(content="Join our __**[Support Server](https://discord.gg/JA6dqWV "
-                                    "\"Join Alexi's support server!\")**__!"))
+                                    "\"Join Majam's support server!\")**__!"))
 
     @commands.group(name="dev", invoke_without_command=True)
     async def development(self, ctx):

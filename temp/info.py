@@ -12,7 +12,7 @@ dict = {
     'avatar ': 'bb49774a1684d9cd1f1958039a25b89c ',
     'id ': '634141001769943090',
     'discriminator ': '9535 ',
-    'username ': 'Alexi ',
+    'username ': 'Majam ',
     'date ': datetime.datetime(2019, 11, 11, 21, 40, 38, 464000),
     'server_count': 40,
     'guilds': ['634141277788831795'],

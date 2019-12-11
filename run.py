@@ -13,7 +13,7 @@ token.read("token.cfg")
 os.system("cls")
 
 
-class Alexi(commands.Bot):
+class Majam(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=data.get_prefix,
                          description=config["UTILITY"]["description"],
@@ -44,4 +44,4 @@ class Alexi(commands.Bot):
 
 
 if __name__ == '__main__':
-    Alexi().run()
+    Majam().run()
