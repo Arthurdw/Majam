@@ -93,7 +93,7 @@ class Main(commands.Cog):
                                             footer=False)["embed"]
             embed.set_footer(
                 text=(config["UTILITY"]["default_footer_message"])[1:-8],
-                icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
+                icon_url="https://cdn.discordapp.com/app-icons/634141001769943090/6720b5715d3741482e7a3552fe7106ec.png")
             embed.timestamp = datetime.datetime.now()
             await ctx.send(embed=embed)
         else:
@@ -102,7 +102,7 @@ class Main(commands.Cog):
                                             footer=False)["embed"]
             embed.set_footer(
                 text=(config["UTILITY"]["default_footer_message"])[1:-8],
-                icon_url="https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
+                icon_url="https://cdn.discordapp.com/app-icons/634141001769943090/6720b5715d3741482e7a3552fe7106ec.png")
             embed.timestamp = datetime.datetime.now()
             await ctx.send(embed=embed)
 
