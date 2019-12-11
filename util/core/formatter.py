@@ -24,7 +24,8 @@ def embed_message(content=None, title=None, type_=None, footer=True,
             footer_message = (config["UTILITY"]["default_footer_message"])[1:] + datetime.datetime.now().strftime("%Y")
         embed.set_footer(text=footer_message,
                          icon_url=footer_icon or
-                         "https://cdn.discordapp.com/avatars/634141001769943090/bb49774a1684d9cd1f1958039a25b89c.webp")
+                         "https://cdn.discordapp.com/app-icons/634141001769943090/6720b5715d3741482e7a3552fe7106ec.png?"
+                         "size=1024")
     return {"embed": embed}
 
 
