@@ -24,7 +24,7 @@ class Dictionary(commands.Cog):
             sep = "\n\n"
             try: short_def = f"**Short definition:**\n{app.short_definition().capitalize().strip()}"
             except KeyError: short_def = ""
-            try: example = f"**Example:**\n{app.example().capitalize().strip()}",
+            try: example = f"**Example:** {app.example().capitalize().strip()}",
             except KeyError: example = ""
             try: etymologies = f"**Etymologies(s):**\n{app.etymologies().capitalize().strip()}"
             except KeyError: etymologies = ""
