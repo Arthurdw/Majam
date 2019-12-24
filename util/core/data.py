@@ -170,19 +170,52 @@ def get_base(user_id: int, balance: int, add=True):
     bal = get_global_bal(user_id=user_id)
     if not bal:
         bal = [(0, 0,)]
-    cash = bal[0][1]
-    final = cash - balance
+    cash = bal[0][0]
     if add:
         final = cash + balance
+    else:
+        final = cash - balance
     return final
+
+
+def withdraw_global_bal(user_id: int, amount: int):
+    add_global_bal(user_id, amount)
+    db_update(db=commandConfig["DATABASE"]["currencyDB"],
+              table="global_balance",
+              table_values="(user_id int, bank int, cash int)",
+              parameters=(user_id, 0, 0),
+              exe=f"SET bank = {get_global_bal(user_id)[0][1] - amount} WHERE user_id = {user_id}")
+
+
+def deposit_global_bal(user_id: int, amount: int):
+    remove_global_bal(user_id, amount)
+    db_update(db=commandConfig["DATABASE"]["currencyDB"],
+              table="global_balance",
+              table_values="(user_id int, bank int, cash int)",
+              parameters=(user_id, 0, 0),
+              exe=f"SET bank = {get_global_bal(user_id)[0][1] + amount} WHERE user_id = {user_id}")
 
 
 def get_global_bal(user_id: int):
     """Gets the cash and bank from a user!"""
-    return db_get(db=commandConfig["DATABASE"]["currencyDB"],
-                  table="global_balance",
-                  table_values="(user_id int, bank int, cash int)",
-                  exe=f"SELECT cash, bank FROM global_balance WHERE user_id = {user_id}")
+    global_bal = db_get(db=commandConfig["DATABASE"]["currencyDB"],
+                        table="global_balance",
+                        table_values="(user_id int, bank int, cash int)",
+                        exe=f"SELECT cash, bank FROM global_balance WHERE user_id = {user_id}")
+    if global_bal:
+        return global_bal
+    else:
+        add_global_user(user_id)
+        return [(0, 0)]
+
+
+def add_global_user(user_id: int):
+    """"Adds a user to the bank system!"""
+    db_add(db=commandConfig["DATABASE"]["currencyDB"],
+           table="global_balance",
+           table_values="(user_id int, bank int, cash int)",
+           parameters=(user_id, 0, 0),
+           questions="(?, ?, ?)")
 
 
 def add_global_bal(user_id: int, balance: int):
@@ -197,12 +230,44 @@ def add_global_bal(user_id: int, balance: int):
 
 def remove_global_bal(user_id: int, balance: int):
     """Takes a user their global cash!"""
-    removed = get_base(user_id, balance)
+    removed = get_base(user_id, balance, False)
     db_update(db=commandConfig["DATABASE"]["currencyDB"],
               table="global_balance",
               table_values="(user_id int, bank int, cash int)",
               parameters=(user_id, 0, balance),
               exe=f"SET cash = {removed} WHERE user_id = {user_id}")
+
+
+def get_global_max_bank(user_id: int):
+    """Gets the max bank capacity from a user"""
+    global_bal_max_bank = db_get(db=commandConfig["DATABASE"]["currencyDB"],
+                                 table="global_balance_max_bank",
+                                 table_values="(user_id int, max_bank int)",
+                                 exe=f"SELECT max_bank FROM global_balance_max_bank WHERE user_id = {user_id}")
+    if global_bal_max_bank:
+        return global_bal_max_bank
+    else:
+        add_max_bank_user(user_id)
+        return [(500, )]
+
+
+def add_max_bank_user(user_id: int):
+    """"Adds a user to the bank system!"""
+    db_add(db=commandConfig["DATABASE"]["currencyDB"],
+           table="global_balance_max_bank",
+           table_values="(user_id int, max_bank int)",
+           parameters=(user_id, 500),
+           questions="(?, ?)")
+
+
+def add_max_bank_bal(user_id: int, amount: int):
+    """Gives a user more global bank storage!"""
+    db_update(db=commandConfig["DATABASE"]["currencyDB"],
+              table="global_balance_max_bank",
+              table_values="(user_id int, max_bank int)",
+              parameters=(user_id, 500),
+              exe=f"SET max_bank = {get_global_max_bank(user_id)[0][0] + amount} WHERE user_id = {user_id}")
+
 
 ################
 #  AUTO ROLES  #

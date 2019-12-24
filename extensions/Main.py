@@ -24,6 +24,10 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         return f"Please use a valid sub-command.\nSee the `{prefix}help {ctx.command.qualified_name}`!"
 
+    @commands.command(name="buy")
+    async def store(self, ctx):
+        await ctx.send("Store is WIP")
+
     @commands.command(name="trump")
     async def trump(self, ctx):
         images = ["https://cdn.discordapp.com/attachments/357495308768247809/651522787692904468/trumpLoL.png",

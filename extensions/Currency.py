@@ -15,10 +15,13 @@ class Currency(commands.Cog):
 
     @staticmethod
     def get_global(user_id: int):
-        cash, bank, bank_max = "**WIP**", 0, "**WIP**"
+        cash, bank, bank_max = "**ERROR**", "**ERROR**", "**ERROR**"
         bank_balance = data.get_global_bal(user_id)
+        max_bank = data.get_global_max_bank(user_id)
         if bank_balance:
-            bank, cash = bank_balance[0][0], bank_balance[0][1]
+            bank, cash = bank_balance[0][1], bank_balance[0][0]
+        if max_bank:
+            bank_max = max_bank[0][0]
         return [bank, cash, bank_max]
 
     @checks.management()
@@ -42,7 +45,8 @@ class Currency(commands.Cog):
         try:
             data.remove_global_bal(user_id=user.id, balance=amount)
             bank, cash, bank_max = self.get_global(user_id=user.id)
-            await ctx.send(**em(content=f"Successfully removed `{amount}` global balance from {user.mention}'s account!\n"                                        f"Their current global balance:\n"
+            await ctx.send(**em(content=f"Successfully removed `{amount}` global balance from {user.mention}'s "
+                                        f"account!\nTheir current global balance:\n"
                                         f"Cash: {cash}\n"
                                         f"Bank: {bank}/{bank_max}"))
         except Exception as e:
@@ -58,6 +62,42 @@ class Currency(commands.Cog):
                             content="Global balance:\n"
                                     f"Cash: {cash}\n"
                                     f"Bank: {bank}/{bank_max}"))
+
+    @commands.command(name="withdraw")
+    async def withdraw(self, ctx, amount: int = None):
+        """Withdraw cash from your bank account!"""
+        if amount is None:
+            await ctx.send(**em(type_="error",
+                                content="You can't withdraw nothing!"))
+            return
+        bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
+        if amount > bank:
+            await ctx.send(**em(content=f"That's more than what you have!\n You got {cash} coins! *(bank)*"))
+        elif amount < 10:
+            await ctx.send(**em(content="The minimum amount to withdraw is 10!"))
+        else:
+            data.withdraw_global_bal(user_id=ctx.author.id, amount=amount)
+            await ctx.send(**em(content=f"Successfully withdrew {amount} coins from secure bank account!"))
+
+    @commands.command(name="deposit")
+    async def dep(self, ctx, amount: int = None):
+        """Deposit cash in to your bank account!"""
+        if amount is None:
+            await ctx.send(**em(type_="error",
+                                content="You can't deposit nothing!"))
+            return
+        bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
+        if amount > cash:
+            await ctx.send(**em(content=f"That's more than what you have!\n You got {cash} coins! *(cash)*"))
+        elif amount < 10:
+            await ctx.send(**em(content="The minimum amount to deposit is 10!"))
+        elif amount + bank > bank_max:
+            await ctx.send(**em(content=f"Your bank account only supports {bank_max} coins!\n"
+                                        f"Let your bank account support more by using commands or buy some! "
+                                        f"*({data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)}buy)*"))
+        else:
+            data.deposit_global_bal(user_id=ctx.author.id, amount=amount)
+            await ctx.send(**em(content=f"Successfully deposited {amount} coins to your secure bank account!"))
 
 
 def setup(bot):
