@@ -72,6 +72,10 @@ class DiscordBotsOrgAPI(commands.Cog):
         except dbl.errors.NotFound:
             await ctx.send(**em("This bot isn't listed on DBL! *(yet?)*"))
 
+    @commands.Cog.listener()
+    async def on_dbl_vote(self, data):
+        print(data)
+
 
 def setup(bot):
     bot.add_cog(DiscordBotsOrgAPI(bot))
