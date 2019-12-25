@@ -51,6 +51,7 @@ class Errors(cmd.Cog):
                 f"Please **try again in** `{str(timedelta(seconds=error.retry_after)).split('.')[0]}`.",
                 type_="error")
             )
+            return
         if isinstance(error, cmd.CheckFailure):
             pass
         if isinstance(error, cmd.BadUnionArgument):
