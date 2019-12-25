@@ -206,10 +206,10 @@ class Main(commands.Cog):
           - `commands`: the discord.ext.commands module
           - `ctx`: the invocation context
           - `__import__`: the builtin `__import__` function
-        Such that `>eval 1 + 1` gives `2` as the result.
+        Such that `eval 1 + 1` gives `2` as the result.
         The following invocation will cause the bot to send the text '9'
         to the channel of invocation and return '3' as the result of evaluating
-        >eval ```
+        eval ```
         a = 1 + 2
         b = a * 2
         await ctx.send(a + b)
@@ -257,6 +257,7 @@ class Main(commands.Cog):
         prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
         await ctx.send(**em(self.default(ctx) + f"\nCurrent prefix: `{prefix}` or just mention me!"))
 
+    @commands.guild_only()
     @prefix.command(name="reset")
     async def reset(self, ctx):
         """Resets a server their prefix."""
@@ -275,6 +276,7 @@ class Main(commands.Cog):
             await ctx.send(**em(type_="error",
                                 content="I don't think this server has a custom prefix..."))
 
+    @commands.guild_only()
     @prefix.command(name="set")
     async def set(self, ctx, prefix=None):
         """Add/Set your custom prefix"""
@@ -305,6 +307,7 @@ class Main(commands.Cog):
                                             f"Exception type: `{type(e).__name__}`\n"
                                             f"Arguments: \n```\n{e.args}\n```"))
 
+    @commands.guild_only()
     @commands.Cog.listener()
     async def on_message(self, message):
         mentions = ['<@634141001769943090>', '<@!634141001769943090>']

@@ -19,6 +19,7 @@ class Majam(commands.Bot):
                          description=config["UTILITY"]["description"],
                          case_insensitive=True,
                          help_attrs=dict(hidden=True))
+        self.remove_command('help')
         print("\\/\\/\\/\\/\\/ EXTENSIONS \\/\\/\\/\\/\\/")
         for extension in glob.glob("extensions/*.py"):
             print(extension.replace("extensions\\", "")[:-3] + ": Starting")

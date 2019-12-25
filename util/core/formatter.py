@@ -31,3 +31,16 @@ def embed_message(content=None, title=None, type_=None, footer=True,
 
 def convert_time(time):
     return time.strftime("%d/%m/%Y | %H:%M:%S")
+
+
+def paginate(content, limit=1900):
+    result = [""]
+    lines = content.splitlines(keepends=True)
+    i = 0
+    for line in lines:
+        if len(result[i]) + len(line) <= limit:
+            result[i] += line
+        else:
+            i += 1
+            result.append(line)
+    return result
