@@ -14,6 +14,7 @@ class Gambling(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.command(name="flip", aliases=["coin"])
     async def coinflip(self, ctx, bet: int, side=None):
+        """Bet on a coinflip."""
         if side is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a side your flip's on!\n"
@@ -64,22 +65,24 @@ class Gambling(commands.Cog):
         spinning = await ctx.send(**em("Spinning weel!"))
         slot_icons = ("<:Majam:659018214633635843>", "<:DevBot:659019961334890537>",
                       "<:CheekiBreeki:659018436524900383>", "💩", "🤡", "🤑", "💸", "💰", "💳", "💵", "💲")
-        choices = (random.choice(slot_icons), random.choice(slot_icons), random.choice(slot_icons),
-                   random.choice(slot_icons), random.choice(slot_icons))
-        win = 0
-        selected = " "
+
+        choices, first, last, win, selected = (), (), (), 0, " "
+        for _ in range(5):
+            choices += (random.choice(slot_icons),)
+            first += (random.choice(slot_icons),)
+            last += (random.choice(slot_icons),)
         for choice in choices:
             if choice == "<:Majam:659018214633635843>" or choice == "<:DevBot:659019961334890537>": win += 2
             elif choice == "<:CheekiBreeki:659018436524900383>": win += 1.5
-            elif choice == "💩" or choice == "🤡": win += -1.2
+            elif choice == "💩" or choice == "🤡": win = 0
             elif choice == "🤑" or choice == "💳": win += 0.2
             elif choice == "💸" or choice == "💰": win += 0.5
             elif choice == "💵" or choice == "💲": win += 1
         await asyncio.sleep(2)
         data.add_global_bal(ctx.author.id, round(bet*win, 2))
         await spinning.edit(**em(title="Slots:",
-                                 content=f"┏━━━━━━━┓\n\u2003{selected.join(choices)}\n┗━━━━━━━┛\nYour bet got multi"
-                                         f"plied by `{win}`. *(`{round(bet*win, 2)}`)*"))
+                                 content=f"{selected.join(first)}\n{selected.join(choices)}<--\n{selected.join(last)}\n"
+                                         f"Your bet got multiplied by `{round(win, 2)}`. *(`{round(bet*win, 2)}`)*"))
 
 
 def setup(bot):

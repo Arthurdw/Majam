@@ -269,6 +269,13 @@ def add_max_bank_bal(user_id: int, amount: int):
               exe=f"SET max_bank = {get_global_max_bank(user_id)[0][0] + amount} WHERE user_id = {user_id}")
 
 
+def get_baltop(amount: int):
+    """retrieves the baltop"""
+    return db_get(db=commandConfig["DATABASE"]["currencyDB"],
+                  table="global_balance_max_bank",
+                  table_values="(user_id int, max_bank int)",
+                  exe=f"SELECT * FROM global_balance ORDER BY cash DESC LIMIT {amount}")
+
 ################
 #  AUTO ROLES  #
 ################

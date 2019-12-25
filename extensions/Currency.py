@@ -26,6 +26,18 @@ class Currency(commands.Cog):
             bank_max = max_bank[0][0]
         return [bank, cash, bank_max]
 
+    @commands.command(name="baltop")
+    async def bal_top(self, ctx):
+        """Displays the top 10 richest people!"""
+        top_list, final, count = [], "\n", 0
+        for user, bank, cash in data.get_baltop(10):
+            count += 1
+            top_list.append(f"{count}\t-\t{discord.utils.get(self.bot.get_all_members(), id=user)}*(`{user}`)*\t|\tcash: "
+                            f"`{cash}`")
+        await ctx.send(**em(title="Top global balances:",
+                            content=f"{final.join(top_list)}\n\nDon't see a guy in here?\nUse "
+                                    f"`{data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)}bal user`"))
+
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name="beg")
     async def beg(self, ctx):
