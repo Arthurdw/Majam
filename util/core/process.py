@@ -36,9 +36,12 @@ def parsing(ctx, message):
 
 
 def parsed(ctx):
-    for item in data.commands(ctx.guild.id):
-        command = str(ctx.invoked_with).lower().strip()
-        if command in item:
-            parsed_data = data.get_response(ctx.guild.id, command)
-            parsed_data = parsing(ctx, parsed_data)
-            return parsed_data
+    try:
+        for item in data.commands(ctx.guild.id):
+            command = str(ctx.invoked_with).lower().strip()
+            if command in item:
+                parsed_data = data.get_response(ctx.guild.id, command)
+                parsed_data = parsing(ctx, parsed_data)
+                return parsed_data
+    except AttributeError:
+        pass
