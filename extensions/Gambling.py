@@ -74,7 +74,7 @@ class Gambling(commands.Cog):
         for choice in choices:
             if choice == "<:Majam:659018214633635843>" or choice == "<:DevBot:659019961334890537>": win += 2
             elif choice == "<:CheekiBreeki:659018436524900383>": win += 1.5
-            elif choice == "💩" or choice == "🤡": win = 0
+            elif choice == "💩" or choice == "🤡": win -= 5
             elif choice == "🤑" or choice == "💳": win += 0.2
             elif choice == "💸" or choice == "💰": win += 0.5
             elif choice == "💵" or choice == "💲": win += 1
