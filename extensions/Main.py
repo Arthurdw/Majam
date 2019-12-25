@@ -158,7 +158,7 @@ class Main(commands.Cog):
             async def send_message(_content):
                 try:
                     await process.processed_embed(ctx, _content)
-                except json.decoder.JSONDecodeError:
+                except json.decoder.JSONDecodeError or AttributeError:
                     await ctx.send(**em(process.parsing(ctx, content)))
             if content is None:
                 await ctx.send(**em(type_="error",
