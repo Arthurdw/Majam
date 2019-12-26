@@ -27,7 +27,7 @@ class Currency(commands.Cog):
         return [bank, cash, bank_max]
 
     @commands.cooldown(1, 3600, commands.BucketType.user)
-    @commands.command(name="daily")
+    @commands.command(name="hourly")
     async def hourly(self, ctx):
         """Get your hourly coins!"""
         coins = random.randint(100, 1000)
