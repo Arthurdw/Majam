@@ -49,11 +49,11 @@ class Errors(cmd.Cog):
             await ctx.send(**em(
                 f"This command is currently **on cooldown** for `{str(timedelta(seconds=error.cooldown.per)).split('.')[0]}`.\n"
                 f"Please **try again in** `{str(timedelta(seconds=error.retry_after)).split('.')[0]}`.",
-                type_="error")
-            )
+                type_="error"))
             return
         if isinstance(error, cmd.CheckFailure):
-            pass
+            await ctx.send(**em("It doesn't look like you have enough perms to execute that command."))
+            return
         if isinstance(error, cmd.BadUnionArgument):
             pass
         if isinstance(error, cmd.BadArgument):
@@ -65,8 +65,7 @@ class Errors(cmd.Cog):
                 parameter = str(error).split('"')[3]
                 await ctx.send(**em(
                     f"The value you passed to **{parameter}** is not a valid **{converters.get(conv, conv)}**.",
-                    type_="error"
-                ))
+                    type_="error"))
                 return
 
             if '" not found' in str(error):
@@ -74,8 +73,7 @@ class Errors(cmd.Cog):
                 value = str(error).split('"')[1]
                 await ctx.send(**em(
                     f"**No {conv} found** that fits the value `{value}`.",
-                    type_="error"
-                ))
+                    type_="error"))
                 return
         if catch_all:
             if isinstance(error, cmd.CommandError):
