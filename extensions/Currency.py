@@ -30,7 +30,7 @@ class Currency(commands.Cog):
     @commands.command(name="hourly")
     async def hourly(self, ctx):
         """Get your hourly coins!"""
-        coins = random.randint(100, 1000)
+        coins = random.randint(10, 100)
         await ctx.send(**em(f"Here you go, you got your hourly coins. ({coins} coins)"))
         data.add_global_bal(ctx.author.id, coins)
 
@@ -38,7 +38,7 @@ class Currency(commands.Cog):
     @commands.command(name="daily")
     async def daily(self, ctx):
         """Get your daily coins!"""
-        coins = random.randint(500, 5000)
+        coins = random.randint(50, 500)
         await ctx.send(**em(f"Here you go, you got your daily coins. ({coins} coins)"))
         data.add_global_bal(ctx.author.id, coins)
 
