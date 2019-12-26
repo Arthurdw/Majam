@@ -65,6 +65,7 @@ class Help(commands.Cog):
                 else:
                     await choice.delete()
         else:
+            prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
             cog = self.bot.get_cog(command)
             cmd = self.bot.get_command(command)
             if cog is None and cmd is None:
@@ -77,7 +78,6 @@ class Help(commands.Cog):
                         for item in walker:
                             sub_const.append(item.qualified_name)
                         help_const.append(f"{message.join(sub_const)}\n")
-                    prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
                     sliced = formatter.paginate(final.join(help_const))
                     for count in range(len(sliced)):
                         title, end, footer = discord.Embed.Empty, "", False
@@ -94,8 +94,12 @@ class Help(commands.Cog):
                     if type(cmd) == discord.ext.commands.core.Group:
                         pass
                     elif type(cmd) == discord.ext.commands.core.Command:
-                        await ctx.send(**em(title=f"About {cmd}:",
-                                            content=f"{cmd.help}{aliases}"))
+                        params = []
+                        for item in cmd.clean_params:
+                            params.append(item)
+                        await ctx.send(**em(title=f"About {cmd.qualified_name}:",
+                                            content=f"Usage: {prefix+cmd.qualified_name+ ' '+' '.join(params)}\n"
+                                                    f"{cmd.help}{aliases}"))
 
 
 def setup(bot):
