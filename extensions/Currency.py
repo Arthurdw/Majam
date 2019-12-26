@@ -66,7 +66,7 @@ class Currency(commands.Cog):
         else:
             await ctx.send(**em("Meh, no coins for you!"))
 
-    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.cooldown(1, 240, commands.BucketType.user)
     @commands.command(name="mine")
     async def mine(self, ctx):
         """Mine some coins. :)"""
@@ -78,6 +78,22 @@ class Currency(commands.Cog):
                               )])
         data.add_global_bal(ctx.author.id, award)
         await ctx.send(**em(f"You have been given {award} coins for mining!"))
+
+    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.command(name="work")
+    async def work(self, ctx):
+        """Word to receive some spicy coins!"""
+        jobs = ["pharmacist", "psychologist", "substance abuse counselor", "environmental scientist",
+                "interpreter & translator", "dental hygienist", "cashier", "event planner", "security guard",
+                "teacher assistant", "computer support specialist", "zoologist", "receptionist", "dancer", "judge"]
+        award = random.choice([random.randint(25, 50), random.randint(25, 100),
+                              random.choice([
+                                  random.randint(75, 300),
+                                  random.randint(250, 700),
+                                  random.choice([random.randint(500, 1000), random.randint(700, 1300)])]
+                              )])
+        data.add_global_bal(ctx.author.id, award)
+        await ctx.send(**em(f"You worked as a {random.choice(jobs)}!\nYour payment was {award} coins!"))
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="send", aliases=["give"])
@@ -97,6 +113,23 @@ class Currency(commands.Cog):
             await asyncio.sleep(3)
             await message.edit(**em(f"Successfully transferred {amount} to {user.mention}!\n"
                                     f"Transfer id: #`{str(hex(message.id))[2:]}`"))
+
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name="rob", aliases=["steal"])
+    async def rob(self, ctx, user: discord.Member = None):
+        """Rob some coins, but watch out!
+        You can get caught!"""
+        caught = random.choice([False, True])
+        if caught:
+            fine = random.randint(1, 2*(data.get_global_bal(ctx.author.id)[0][0]/3))
+            data.remove_global_bal(ctx.author.id, fine)
+            data.add_global_bal(user.id, fine)
+            await ctx.send(**em(f"YOU GOT CAUGHT!!\nYou paid a of {fine} coins to the {user.mention}!"))
+        else:
+            win = random.randint(1, 2*(data.get_global_bal(user.id)[0][0]/3))
+            data.remove_global_bal(user.id, win)
+            data.add_global_bal(ctx.author.id, win)
+            await ctx.send(**em(f"You stole {win} coins from {user.mention}!"))
 
     @checks.management()
     @commands.command(name="rich", aliases=["addbal", "addbalance"])
