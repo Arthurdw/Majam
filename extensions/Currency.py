@@ -26,6 +26,22 @@ class Currency(commands.Cog):
             bank_max = max_bank[0][0]
         return [bank, cash, bank_max]
 
+    @commands.cooldown(1, 3600, commands.BucketType.user)
+    @commands.command(name="daily")
+    async def hourly(self, ctx):
+        """Get your hourly coins!"""
+        coins = random.randint(100, 1000)
+        await ctx.send(**em(f"Here you go, you got your hourly coins. ({coins} coins)"))
+        data.add_global_bal(ctx.author.id, coins)
+
+    @commands.cooldown(1, 86400, commands.BucketType.user)
+    @commands.command(name="daily")
+    async def daily(self, ctx):
+        """Get your daily coins!"""
+        coins = random.randint(500, 5000)
+        await ctx.send(**em(f"Here you go, you got your daily coins. ({coins} coins)"))
+        data.add_global_bal(ctx.author.id, coins)
+
     @commands.command(name="baltop")
     async def bal_top(self, ctx):
         """Displays the top 10 richest people!"""
@@ -44,7 +60,9 @@ class Currency(commands.Cog):
         """Beg for some coins you silly!"""
         messages = ["Here get some coins!\n(`{coins}`)", "You in need of some cash?\nHaha get some coins!\n(`{coins}`)"]
         if random.choice([True, False]):
-            await ctx.send(**em(random.choice(messages).format(coins=random.randint(2, 50))))
+            coins = random.randint(2, 50)
+            await ctx.send(**em(random.choice(messages).format(coins=coins)))
+            data.add_global_bal(ctx.author.id, coins)
         else:
             await ctx.send(**em("Meh, no coins for you!"))
 
