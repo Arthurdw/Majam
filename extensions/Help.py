@@ -49,16 +49,19 @@ class Help(commands.Cog):
                             sub_const = []
                 prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
                 sliced = formatter.paginate(final.join(help_const))
-                for count in range(len(sliced)):
-                    title, end, footer = discord.Embed.Empty, "", False
-                    if count == 0:
-                        title = "Help:"
-                    if count == len(sliced) - 1:
-                        end = f"\n*Type {prefix}help command* for more details!"
-                        footer = True
-                    await receiver.send(**em(title=title,
-                                             content=sliced[count] + end,
-                                             footer=footer))
+                try:
+                    for count in range(len(sliced)):
+                        title, end, footer = discord.Embed.Empty, "", False
+                        if count == 0:
+                            title = "Help:"
+                        if count == len(sliced) - 1:
+                            end = f"\n*Type {prefix}help command* for more details!"
+                            footer = True
+                        await receiver.send(**em(title=title,
+                                                 content=sliced[count] + end,
+                                                 footer=footer))
+                except discord.errors.Forbidden:
+                    await ctx.send(**em(type_="error", content=f"I could not send the message!"))
                 if str(reaction) == "<:DM:659338796550193171>":
                     await choice.edit(**em("Successfully send the help menu in a private message!"))
                     await choice.clear_reactions()
