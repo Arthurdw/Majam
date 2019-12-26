@@ -267,7 +267,7 @@ class Main(commands.Cog):
             else:
                 await ctx.send(**em(type_="error",
                                     content="You need to have at least administrator permission to "
-                                            "edit a custom command!"))
+                                            "edit a prefix!"))
                 return
         try:
             data.reset_prefix(ctx.guild.id)
@@ -286,7 +286,7 @@ class Main(commands.Cog):
             else:
                 await ctx.send(**em(type_="error",
                                     content="You need to have at least administrator permission to "
-                                            "edit a custom command!"))
+                                            "edit a prefix!"))
                 return
         if prefix is None:
             await ctx.send(**em(self.default(ctx)))
