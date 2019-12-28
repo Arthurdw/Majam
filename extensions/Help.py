@@ -7,6 +7,18 @@ from util.core import formatter, data
 em = formatter.embed_message
 
 
+def exe_walker(walk):
+    _walker = [c for c in walk.walk_commands()]
+    checked, sub_const, count = [], [], 0
+    if _walker:
+        for item in _walker:
+            if item.qualified_name not in checked:
+                sub_const.append(item.qualified_name)
+                checked.append(item.qualified_name)
+                count += 1
+        return sub_const, count
+
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -43,9 +55,8 @@ class Help(commands.Cog):
                         _commands = cog.get_commands()
                         walker = [c for c in cog.walk_commands()]
                         if walker:
-                            for item in walker:
-                                sub_const.append(item.qualified_name)
-                            help_const.append(f"**{cog.qualified_name}**:\n{message.join(sub_const)}\n")
+                            sub_const, count = exe_walker(cog)
+                            help_const.append(f"**{cog.qualified_name} [`{count}`]**:\n{message.join(sub_const)}\n")
                             sub_const = []
                 prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
                 sliced = formatter.paginate(final.join(help_const))
@@ -75,17 +86,16 @@ class Help(commands.Cog):
                 await ctx.send(**em("I couldn't find any related command!"))
             else:
                 if cog is not None:
-                    _commands = cog.get_commands()
                     walker = [c for c in cog.walk_commands()]
+                    counter = 0
                     if walker:
-                        for item in walker:
-                            sub_const.append(item.qualified_name)
+                        sub_const, counter = exe_walker(cog)
                         help_const.append(f"{message.join(sub_const)}\n")
                     sliced = formatter.paginate(final.join(help_const))
                     for count in range(len(sliced)):
                         title, end, footer = discord.Embed.Empty, "", False
                         if count == 0:
-                            title = f"{cog.qualified_name} command(s):"
+                            title = f"{cog.qualified_name} command(s) [`{counter}`]:"
                         if count == len(sliced) - 1:
                             end = f"\n*Type {prefix}help command* for more details!"
                             footer = True
@@ -95,14 +105,29 @@ class Help(commands.Cog):
                     if cmd.aliases:
                         aliases = f"\nAliases: " + ", ".join(cmd.aliases)
                     if type(cmd) == discord.ext.commands.core.Group:
-                        pass
+                        walker = [c for c in cmd.walk_commands()]
+                        counter = 0
+                        if walker:
+                            sub_const, counter = exe_walker(cmd)
+                            help_const.append(message.join([r.replace(f"{cmd.qualified_name} ", "") for r in sub_const])
+                                              + "\n")
+                        sliced = formatter.paginate(final.join(help_const))
+                        for count in range(len(sliced)):
+                            title, end, footer = discord.Embed.Empty, "", False
+                            if count == 0:
+                                pre = cmd.help + "\n" or ''
+                                title = f"{str(cmd.qualified_name).capitalize()} sub-command(s) [`{counter}`]:"
+                            if count == len(sliced) - 1:
+                                end = f"\n*Type {prefix}help {cmd} sub-command* for more details!"
+                                footer = True
+                            await ctx.send(**em(title=title, content=pre + sliced[count] + end, footer=footer))
                     elif type(cmd) == discord.ext.commands.core.Command:
                         params = []
                         for item in cmd.clean_params:
                             params.append(item)
                         await ctx.send(**em(title=f"About {cmd.qualified_name}:",
                                             content=f"Usage: {prefix+cmd.qualified_name+ ' '+' '.join(params)}\n"
-                                                    f"{cmd.help}{aliases}"))
+                                                    f"{cmd.help or ''}{aliases}"))
 
 
 def setup(bot):
