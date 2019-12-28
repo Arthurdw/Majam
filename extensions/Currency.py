@@ -134,6 +134,11 @@ class Currency(commands.Cog):
         if user == ctx.author:
             await ctx.send(**em("Open your pocket, WOW you just robbed yourself..."))
             return
+        elif data.get_global_bal(ctx.author.id)[0][0] < 100:
+            await ctx.send(**em("You need at least `100` coins to rob someone! (cash)"))
+            return
+        elif data.get_global_bal(user.id)[0][0] < 100:
+            await ctx.send(**em(f"{user.mention} has less than 100 coins cash!\nYou can't rob this person right now!"))
         caught = random.choice([False, True])
         if caught:
             fine = random.randint(1, int(2*(data.get_global_bal(ctx.author.id)[0][0]/3)))
