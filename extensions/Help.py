@@ -113,7 +113,7 @@ class Help(commands.Cog):
                                               + "\n")
                         sliced = formatter.paginate(final.join(help_const))
                         for count in range(len(sliced)):
-                            title, end, footer = discord.Embed.Empty, "", False
+                            title, end, pre, footer = discord.Embed.Empty, "", "", False
                             if count == 0:
                                 pre = cmd.help + "\n" or ''
                                 title = f"{str(cmd.qualified_name).capitalize()} sub-command(s) [`{counter}`]:"
