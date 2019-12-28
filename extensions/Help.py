@@ -40,18 +40,13 @@ class Help(commands.Cog):
                 return _user == ctx.author and (str(_reaction.emoji) == "<:Chat:659338796181225474>" or
                                                 str(_reaction.emoji) == "<:DM:659338796550193171>")
 
-            func = choice.edit
-            try:
-                await func(**em("Would you like to receive the help message in private messages or in this "
-                                "channel?\nClick on the <:Chat:659338796181225474> emoji to let me post it in "
-                                "chat.\nClick on the <:DM:659338796550193171> emoji to let me post it in DM."))
-            except discord.errors.NotFound:
-                func = ctx.send
-
             try:
                 reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
             except asyncio.TimeoutError:
-                await func(**em("You didn't react or to late. *(60s+)*"))
+                try:
+                    await choice.edit(**em("You didn't react or to late. *(60s+)*"))
+                except discord.errors.NotFound:
+                    await ctx.send(**em("You didn't react or to late. *(60s+)*"))
                 try: await choice.clear_reactions()
                 except: pass
             else:
@@ -84,9 +79,12 @@ class Help(commands.Cog):
                 except discord.errors.Forbidden:
                     await ctx.send(**em(type_="error", content=f"I could not send the message!"))
                 if str(reaction) == "<:DM:659338796550193171>":
-                    await func(**em("Successfully send the help menu in a private message!"))
-                    try: await choice.clear_reactions()
-                    except: pass
+                    try:
+                        await choice.edit(**em("Successfully send the help menu in a private message!"))
+                        try: await choice.clear_reactions()
+                        except: pass
+                    except discord.errors.NotFound:
+                        await ctx.send(**em("Successfully send the help menu in a private message!"))
                 else:
                     try: await choice.delete()
                     except: pass
