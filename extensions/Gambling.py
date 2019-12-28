@@ -14,7 +14,9 @@ class Gambling(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.command(name="flip", aliases=["coin"])
     async def coinflip(self, ctx, bet: int, side=None):
-        """Bet on a coinflip."""
+        """Bet on a coinflip.
+        Choose side 'heads' or 'tails'.
+        If chosen right you'll double your bet!"""
         if side is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a side your flip's on!\n"
@@ -57,7 +59,9 @@ class Gambling(commands.Cog):
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(name="slots")
     async def slots(self, ctx, bet: int):
-        """Gamble with slots!"""
+        """Gamble with slots!
+        Slots are very profitable, but watch out!
+        You can lose more than what you bet"""
         if bet < 100:
             await ctx.send(**em("The minimum bet is 100!"))
             ctx.command.reset_cooldown(ctx)
@@ -78,11 +82,32 @@ class Gambling(commands.Cog):
             elif choice == "🤑" or choice == "💳": win += 0.2
             elif choice == "💸" or choice == "💰": win += 0.5
             elif choice == "💵" or choice == "💲": win += 1
-        await asyncio.sleep(2)
-        data.add_global_bal(ctx.author.id, round(bet*win, 2))
-        await spinning.edit(**em(title="Slots:",
-                                 content=f"{selected.join(first)}\n{selected.join(choices)}<--\n{selected.join(last)}\n"
-                                         f"Your bet got multiplied by `{round(win, 2)}`. *(`{round(bet*win, 2)}`)*"))
+        await asyncio.sleep(10)
+        func = spinning.edit
+        try:
+            await spinning.edit(**em("Spinning weel!"))
+        except discord.errors.NotFound:
+            func = ctx.send
+        if win >= 0:
+            data.add_global_bal(ctx.author.id, round(bet*win, 2))
+            await func(**em(title="Slots:",
+                            content=f"{selected.join(first)}\n{selected.join(choices)}<--\n"
+                            f"{selected.join(last)}\nYour bet got multiplied by `{round(win, 2)}`. "
+                            f"*(`{round(bet*win, 2)}`)*"))
+        else:
+            if data.get_global_bal(ctx.author.id)[0][0] - bet*win > 0:
+                data.add_global_bal(ctx.author.id, round(bet*win, 2))
+                await func(**em(title="Slots:",
+                                content=f"{selected.join(first)}\n{selected.join(choices)}<--\n"
+                                        f"{selected.join(last)}\nYou lost your bet by `{round(win, 2)}`."
+                                        f" *(`{round(bet*win, 2)}`)*"))
+            else:
+                data.add_global_bal(ctx.author.id, -data.get_global_bal(ctx.author.id)[0][0])
+                await func(**em(title="Slots:",
+                                content=f"{selected.join(first)}\n{selected.join(choices)}<--\n"
+                                        f"{selected.join(last)}\nYou lost your bet by `{round(win, 2)}`. "
+                                        f"*(`{round(bet*win, 2)}`)*\nBecause you dont have so much coins your "
+                                        f"balance got set to `0`!"))
 
 
 def setup(bot):

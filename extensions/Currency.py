@@ -45,11 +45,13 @@ class Currency(commands.Cog):
     @commands.command(name="baltop")
     async def bal_top(self, ctx):
         """Displays the top 10 richest people!"""
-        top_list, final, count = [], "\n", 0
+        top_list, final, count = [], "\n", 1
         for user, bank, cash in data.get_baltop(10):
+            member = discord.utils.get(self.bot.get_all_members(), id=user)
+            if member is not None:
+                top_list.append(f"{count}\t-\t{member}*(`{user}`)*\t|\tcash: "
+                                f"`{round(cash, 2)}`")
             count += 1
-            top_list.append(f"{count}\t-\t{discord.utils.get(self.bot.get_all_members(), id=user)}*(`{user}`)*\t|\tcash: "
-                            f"`{cash}`")
         await ctx.send(**em(title="Top global balances:",
                             content=f"{final.join(top_list)}\n\nDon't see a guy in here?\nUse "
                                     f"`{data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)}bal user`"))
@@ -116,20 +118,22 @@ class Currency(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="rob", aliases=["steal"])
-    async def rob(self, ctx, user: discord.Member = None):
+    async def rob(self, ctx, user: discord.Member):
         """Rob some coins, but watch out!
         You can get caught!"""
+        if user == ctx.author:
+            await ctx.send(**em("Open your pocket, WOW you just robbed yourself..."))
+            return
         caught = random.choice([False, True])
+        win = random.randint(1, int(2*(data.get_global_bal(user.id)[0][0]/3)))
         if caught:
-            fine = random.randint(1, 2*(data.get_global_bal(ctx.author.id)[0][0]/3))
-            data.remove_global_bal(ctx.author.id, fine)
-            data.add_global_bal(user.id, fine)
-            await ctx.send(**em(f"YOU GOT CAUGHT!!\nYou paid a of {fine} coins to the {user.mention}!"))
+            data.remove_global_bal(ctx.author.id, win)
+            data.add_global_bal(user.id, win)
+            await ctx.send(**em(f"YOU GOT CAUGHT!!\nYou paid a of {round(win, 2)} coins to the {user.mention}!"))
         else:
-            win = random.randint(1, 2*(data.get_global_bal(user.id)[0][0]/3))
             data.remove_global_bal(user.id, win)
             data.add_global_bal(ctx.author.id, win)
-            await ctx.send(**em(f"You stole {win} coins from {user.mention}!"))
+            await ctx.send(**em(f"You stole {round(win, 2)} coins from {user.mention}!"))
 
     @checks.management()
     @commands.command(name="rich", aliases=["addbal", "addbalance"])
@@ -139,8 +143,8 @@ class Currency(commands.Cog):
         bank, cash, bank_max = self.get_global(user_id=user.id)
         await ctx.send(**em(content=f"Successfully added `{amount}` global balance to {user.mention}'s account!\n"
                                     f"Their current global balance:\n"
-                                    f"Cash: {cash}\n"
-                                    f"Bank: {bank}/{bank_max}"))
+                                    f"Cash: {round(cash, 2)}\n"
+                                    f"Bank: {round(bank, 2)}/{round(bank_max, 2)}"))
 
     @checks.management()
     @commands.command(name="poor", aliases=["delbal", "delbalance", "rembal", "rembalance"])
@@ -151,8 +155,8 @@ class Currency(commands.Cog):
             bank, cash, bank_max = self.get_global(user_id=user.id)
             await ctx.send(**em(content=f"Successfully removed `{amount}` global balance from {user.mention}'s "
                                         f"account!\nTheir current global balance:\n"
-                                        f"Cash: {cash}\n"
-                                        f"Bank: {bank}/{bank_max}"))
+                                        f"Cash: {round(cash, 2)}\n"
+                                        f"Bank: {round(bank, 2)}/{round(bank_max, 2)}"))
         except Exception as e:
             print(e)
 
@@ -164,8 +168,8 @@ class Currency(commands.Cog):
         bank, cash, bank_max = self.get_global(user_id=user.id)
         await ctx.send(**em(title=f"{user.display_name}'s balance:",
                             content="Global balance:\n"
-                                    f"Cash: {cash}\n"
-                                    f"Bank: {bank}/{bank_max}"))
+                                    f"Cash: {round(cash, 2)}\n"
+                                    f"Bank: {round(bank, 2)}/{round(bank_max, 2)}"))
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="withdraw")
@@ -178,7 +182,7 @@ class Currency(commands.Cog):
             return
         bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
         if amount > bank:
-            await ctx.send(**em(content=f"That's more than what you have!\n You got {cash} coins! *(bank)*"))
+            await ctx.send(**em(content=f"That's more than what you have!\n You got {round(cash, 2)} coins! *(bank)*"))
             ctx.command.reset_cooldown(ctx)
         elif amount < 10:
             await ctx.send(**em(content="The minimum amount to withdraw is 10!"))
@@ -198,13 +202,13 @@ class Currency(commands.Cog):
             return
         bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
         if amount > cash:
-            await ctx.send(**em(content=f"That's more than what you have!\n You got {cash} coins! *(cash)*"))
+            await ctx.send(**em(content=f"That's more than what you have!\n You got {round(cash, 2)} coins! *(cash)*"))
             ctx.command.reset_cooldown(ctx)
         elif amount < 10:
             await ctx.send(**em(content="The minimum amount to deposit is 10!"))
             ctx.command.reset_cooldown(ctx)
         elif amount + bank > bank_max:
-            await ctx.send(**em(content=f"Your bank account only supports {bank_max} coins!\n"
+            await ctx.send(**em(content=f"Your bank account only supports {round(bank_max, 2)} coins!\n"
                                         f"Let your bank account support more by using commands or buy some! "
                                         f"*({data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)}buy)*"))
             ctx.command.reset_cooldown(ctx)
