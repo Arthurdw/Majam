@@ -13,10 +13,18 @@ class Gambling(commands.Cog):
 
     @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.command(name="flip", aliases=["coin"])
-    async def coinflip(self, ctx, bet: int, side=None):
+    async def coinflip(self, ctx, bet, side=None):
         """Bet on a coinflip.
         Choose side 'heads' or 'tails'.
         If chosen right you'll double your bet!"""
+        try:
+            bet = int(bet)
+        except ValueError:
+            if str(bet).lower() != "all":
+                await ctx.send(**em("Please give me a valid bet!\nOr if you want to go all in use \"all\"!"))
+                return
+        if str(bet).lower() == "all":
+            bet = data.get_global_bal(ctx.author.id)[0][0]
         if side is None:
             await ctx.send(**em(type_="error",
                                 content="Please provide a side your flip's on!\n"
@@ -29,7 +37,7 @@ class Gambling(commands.Cog):
             return
         elif bet > data.get_global_bal(ctx.author.id)[0][0]:
             await ctx.send(**em("You can't bet what you don't have!\n"
-                                f"You have `{data.get_global_bal(ctx.author.id)[0][0]}` coins!"))
+                                f"You have `{round(data.get_global_bal(ctx.author.id)[0][0], 2)}` coins!"))
             ctx.command.reset_cooldown(ctx)
             return
         _heads, _tails = False, False
@@ -48,20 +56,28 @@ class Gambling(commands.Cog):
             if _tails:
                 win_winning_side, los_winning_side = tails[0].capitalize(), heads[0].capitalize()
             if _heads is random.choice([True, False]):
-                await ctx.send(**em(f"You just doubled your bet. *(`{bet}` --> `{bet*2}`)*\n"
+                await ctx.send(**em(f"You just doubled your bet. *(`{round(bet, 2)}` --> `{round(bet*2, 2)}`)*\n"
                                     f"Winning side: {win_winning_side}"))
                 data.add_global_bal(ctx.author.id, bet)
             else:
-                await ctx.send(**em(f"You just lost your bet! *(`{bet}`)*\n"
+                await ctx.send(**em(f"You just lost your bet! *(`{round(bet, 2)}`)*\n"
                                     f"Winning side: {los_winning_side}"))
                 data.remove_global_bal(ctx.author.id, bet)
 
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(name="slots")
-    async def slots(self, ctx, bet: int):
+    async def slots(self, ctx, bet):
         """Gamble with slots!
         Slots are very profitable, but watch out!
         You can lose more than what you bet"""
+        try:
+            bet = int(bet)
+        except ValueError:
+            if str(bet).lower() != "all":
+                await ctx.send(**em("Please give me a valid bet!\nOr if you want to go all in use \"all\"!"))
+                return
+        if str(bet).lower() == "all":
+            bet = data.get_global_bal(ctx.author.id)[0][0]
         if bet < 100:
             await ctx.send(**em("The minimum bet is 100!"))
             ctx.command.reset_cooldown(ctx)
@@ -76,13 +92,13 @@ class Gambling(commands.Cog):
             first += (random.choice(slot_icons),)
             last += (random.choice(slot_icons),)
         for choice in choices:
-            if choice == "<:Majam:659018214633635843>" or choice == "<:DevBot:659019961334890537>": win += 2
-            elif choice == "<:CheekiBreeki:659018436524900383>": win += 1.5
+            if choice == "<:Majam:659018214633635843>" or choice == "<:DevBot:659019961334890537>": win += 1.5
+            elif choice == "<:CheekiBreeki:659018436524900383>": win += 1.25
             elif choice == "💩" or choice == "🤡": win -= 2.5
             elif choice == "🤑" or choice == "💳": win += 0.2
             elif choice == "💸" or choice == "💰": win += 0.5
             elif choice == "💵" or choice == "💲": win += 1
-        await asyncio.sleep(10)
+        await asyncio.sleep(2)
         func = spinning.edit
         try:
             await spinning.edit(**em("Spinning weel!"))

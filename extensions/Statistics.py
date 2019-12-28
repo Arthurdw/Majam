@@ -1,6 +1,7 @@
 import configparser
 import time
 import datetime
+import random
 from discord.ext import commands
 from util.core import data, formatter, GitHub
 
@@ -67,6 +68,8 @@ class Statistics(commands.Cog):
         ctx = await self.bot.get_context(message)
         if ctx.valid:
             data.add_stats("command")
+            if random.choice([True, False]):
+                data.add_max_bank_bal(message.author.id, 1)
         else:
             data.add_stats("messages")
 

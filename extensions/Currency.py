@@ -99,8 +99,18 @@ class Currency(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="send", aliases=["give"])
-    async def send(self, ctx, user: discord.Member, amount: int):
+    async def send(self, ctx, user: discord.Member, amount):
         """Give some cash coins to a friend!"""
+        try:
+            amount = int(amount)
+        except ValueError:
+            if str(amount).lower() != "all":
+                await ctx.send(**em(f"Please specify how much you want to give to {user.mention}!"
+                                    "\nOr if you want to send them everything in use \"all\"!"))
+                ctx.command.reset_cooldown(ctx)
+                return
+        if str(amount).lower() == "all":
+            amount = data.get_global_bal(ctx.author.id)[0][0]
         bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
         if amount < 10:
             await ctx.send(**em("The minimum you can give to a user is 10 coins!"))
@@ -125,12 +135,13 @@ class Currency(commands.Cog):
             await ctx.send(**em("Open your pocket, WOW you just robbed yourself..."))
             return
         caught = random.choice([False, True])
-        win = random.randint(1, int(2*(data.get_global_bal(user.id)[0][0]/3)))
         if caught:
-            data.remove_global_bal(ctx.author.id, win)
-            data.add_global_bal(user.id, win)
-            await ctx.send(**em(f"YOU GOT CAUGHT!!\nYou paid a of {round(win, 2)} coins to the {user.mention}!"))
+            fine = random.randint(1, int(2*(data.get_global_bal(ctx.author.id)[0][0]/3)))
+            data.remove_global_bal(ctx.author.id, fine)
+            data.add_global_bal(user.id, fine)
+            await ctx.send(**em(f"YOU GOT CAUGHT!!\nYou paid a of {round(fine, 2)} coins to the {user.mention}!"))
         else:
+            win = random.randint(1, int(2 * (data.get_global_bal(user.id)[0][0] / 3)))
             data.remove_global_bal(user.id, win)
             data.add_global_bal(ctx.author.id, win)
             await ctx.send(**em(f"You stole {round(win, 2)} coins from {user.mention}!"))
@@ -173,13 +184,23 @@ class Currency(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="withdraw")
-    async def withdraw(self, ctx, amount: int = None):
+    async def withdraw(self, ctx, amount=None):
         """Withdraw cash from your bank account!"""
-        if amount is None:
-            await ctx.send(**em(type_="error",
-                                content="You can't withdraw nothing!"))
-            ctx.command.reset_cooldown(ctx)
-            return
+        try:
+            amount = int(amount)
+        except ValueError:
+            if amount is None:
+                await ctx.send(**em(type_="error",
+                                    content="You can't withdraw nothing!"))
+                ctx.command.reset_cooldown(ctx)
+                return
+            if str(amount).lower() != "all":
+                await ctx.send(**em(f"Please specify how much you want to withdraw!"
+                                    "\nOr if you want to withdraw everything use \"all\"!"))
+                ctx.command.reset_cooldown(ctx)
+                return
+        if str(amount).lower() == "all":
+            amount = data.get_global_bal(ctx.author.id)[0][1]
         bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
         if amount > bank:
             await ctx.send(**em(content=f"That's more than what you have!\n You got {round(cash, 2)} coins! *(bank)*"))
@@ -189,18 +210,30 @@ class Currency(commands.Cog):
             ctx.command.reset_cooldown(ctx)
         else:
             data.withdraw_global_bal(user_id=ctx.author.id, amount=amount)
-            await ctx.send(**em(content=f"Successfully withdrew {amount} coins from secure bank account!"))
+            await ctx.send(**em(content=f"Successfully withdrew {round(amount, 2)} coins from secure bank account!"))
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(name="deposit")
-    async def dep(self, ctx, amount: int = None):
+    @commands.command(name="deposit", aliases=["dep"])
+    async def deposit(self, ctx, amount=None):
         """Deposit cash in to your bank account!"""
-        if amount is None:
-            await ctx.send(**em(type_="error",
-                                content="You can't deposit nothing!"))
-            ctx.command.reset_cooldown(ctx)
-            return
+        try:
+            amount = int(amount)
+        except ValueError:
+            if amount is None:
+                await ctx.send(**em(type_="error",
+                                    content="You can't deposit nothing!"))
+                ctx.command.reset_cooldown(ctx)
+                return
+            if str(amount).lower() != "all":
+                await ctx.send(**em(f"Please specify how much you want to deposit!"
+                                    "\nOr if you want to deposit everything use \"all\"!"))
+                ctx.command.reset_cooldown(ctx)
+                return
         bank, cash, bank_max = self.get_global(user_id=ctx.author.id)
+        if str(amount).lower() == "all":
+            amount = data.get_global_bal(ctx.author.id)[0][0]
+            if amount > bank + bank_max:
+                amount = bank_max-bank
         if amount > cash:
             await ctx.send(**em(content=f"That's more than what you have!\n You got {round(cash, 2)} coins! *(cash)*"))
             ctx.command.reset_cooldown(ctx)
@@ -214,7 +247,7 @@ class Currency(commands.Cog):
             ctx.command.reset_cooldown(ctx)
         else:
             data.deposit_global_bal(user_id=ctx.author.id, amount=amount)
-            await ctx.send(**em(content=f"Successfully deposited {amount} coins to your secure bank account!"))
+            await ctx.send(**em(content=f"Successfully deposited {round(amount, 2)} coins to your secure bank account!"))
 
 
 def setup(bot):
