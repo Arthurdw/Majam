@@ -112,7 +112,6 @@ class Gambling(commands.Cog):
                             content=f"{selected.join(first)}\n{selected.join(choices)}<--\n"
                             f"{selected.join(last)}\nYour bet got multiplied by `{round(win, 2)}`. "
                             f"*(`{round(bet*win, 2)}`)*"))
-            print(1)
         else:
             if bet*win - data.get_global_bal(ctx.author.id)[0][0] > 0:
                 data.add_global_bal(ctx.author.id, round(bet*win, 2))
@@ -120,7 +119,6 @@ class Gambling(commands.Cog):
                                 content=f"{selected.join(first)}\n{selected.join(choices)}<--\n"
                                         f"{selected.join(last)}\nYou lost your bet by `{round(win, 2)}`."
                                         f" *(`{round(bet*win, 2)}`)*"))
-                print(2)
             else:
                 data.add_global_bal(ctx.author.id, -data.get_global_bal(ctx.author.id)[0][0])
                 await func(**em(title="Slots:",
@@ -128,7 +126,6 @@ class Gambling(commands.Cog):
                                         f"{selected.join(last)}\nYou lost your bet by `{round(win, 2)}`. "
                                         f"*(`{round(bet*win, 2)}`)*\nBecause you dont have so much coins your "
                                         f"balance got set to `0`!"))
-                print(3)
 
 
 def setup(bot):
