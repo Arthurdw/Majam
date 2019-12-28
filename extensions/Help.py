@@ -31,17 +31,27 @@ class Help(commands.Cog):
             choice = await ctx.send(**em("Would you like to receive the help message in private messages or in this "
                                          "channel?\nClick on the <:Chat:659338796181225474> emoji to let me post it in "
                                          "chat.\nClick on the <:DM:659338796550193171> emoji to let me post it in DM."))
-            await choice.add_reaction(":Chat:659338796181225474")
-            await choice.add_reaction(":DM:659338796550193171")
+            try:
+                await choice.add_reaction(":Chat:659338796181225474")
+                await choice.add_reaction(":DM:659338796550193171")
+            except: pass
 
             def check(_reaction, _user):
                 return _user == ctx.author and (str(_reaction.emoji) == "<:Chat:659338796181225474>" or
                                                 str(_reaction.emoji) == "<:DM:659338796550193171>")
 
+            func = choice.edit
+            try:
+                await func(**em("Would you like to receive the help message in private messages or in this "
+                                "channel?\nClick on the <:Chat:659338796181225474> emoji to let me post it in "
+                                "chat.\nClick on the <:DM:659338796550193171> emoji to let me post it in DM."))
+            except discord.errors.NotFound:
+                func = ctx.send
+
             try:
                 reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
             except asyncio.TimeoutError:
-                await choice.edit(**em("You didn't react or to late. *(60s+)*"))
+                await func(**em("You didn't react or to late. *(60s+)*"))
                 try: await choice.clear_reactions()
                 except: pass
             else:
@@ -74,10 +84,12 @@ class Help(commands.Cog):
                 except discord.errors.Forbidden:
                     await ctx.send(**em(type_="error", content=f"I could not send the message!"))
                 if str(reaction) == "<:DM:659338796550193171>":
-                    await choice.edit(**em("Successfully send the help menu in a private message!"))
-                    await choice.clear_reactions()
+                    await func(**em("Successfully send the help menu in a private message!"))
+                    try: await choice.clear_reactions()
+                    except: pass
                 else:
-                    await choice.delete()
+                    try: await choice.delete()
+                    except: pass
         else:
             prefix = data.get_prefix(bot=self.bot, message=ctx.message, db_only=True)
             cog = self.bot.get_cog(command)
