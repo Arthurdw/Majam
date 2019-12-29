@@ -19,7 +19,7 @@ class Gambling(commands.Cog):
         If chosen right you'll double your bet!"""
         try:
             bet = int(bet)
-        except ValueError:
+        except ValueError or TypeError:
             if str(bet).lower() != "all":
                 await ctx.send(**em("Please give me a valid bet!\nOr if you want to go all in use \"all\"!"))
                 ctx.command.reset_cooldown(ctx)
@@ -73,7 +73,7 @@ class Gambling(commands.Cog):
         You can lose more than what you bet"""
         try:
             bet = int(bet)
-        except ValueError:
+        except ValueError or TypeError:
             if str(bet).lower() != "all":
                 await ctx.send(**em("Please give me a valid bet!\nOr if you want to go all in use \"all\"!"))
                 ctx.command.reset_cooldown(ctx)

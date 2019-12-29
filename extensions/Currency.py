@@ -103,7 +103,7 @@ class Currency(commands.Cog):
         """Give some cash coins to a friend!"""
         try:
             amount = int(amount)
-        except ValueError:
+        except ValueError or TypeError:
             if str(amount).lower() != "all":
                 await ctx.send(**em(f"Please specify how much you want to give to {user.mention}!"
                                     "\nOr if you want to send them everything in use \"all\"!"))
@@ -126,7 +126,7 @@ class Currency(commands.Cog):
             await message.edit(**em(f"Successfully transferred {amount} to {user.mention}!\n"
                                     f"Transfer id: #`{str(hex(message.id))[2:]}`"))
 
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.command(name="rob", aliases=["steal"])
     async def rob(self, ctx, user: discord.Member):
         """Rob some coins, but watch out!
@@ -142,12 +142,12 @@ class Currency(commands.Cog):
             return
         caught = random.choice([False, True])
         if caught:
-            fine = random.randint(1, int(2*(data.get_global_bal(ctx.author.id)[0][0]/3)))
+            fine = random.randint(1, int(data.get_global_bal(ctx.author.id)[0][0] / 4))
             data.remove_global_bal(ctx.author.id, fine)
             data.add_global_bal(user.id, fine)
             await ctx.send(**em(f"YOU GOT CAUGHT!!\nYou paid a of {round(fine, 2)} coins to the {user.mention}!"))
         else:
-            win = random.randint(1, int(2 * (data.get_global_bal(user.id)[0][0] / 3)))
+            win = random.randint(1, int(data.get_global_bal(user.id)[0][0] / 4))
             data.remove_global_bal(user.id, win)
             data.add_global_bal(ctx.author.id, win)
             await ctx.send(**em(f"You stole {round(win, 2)} coins from {user.mention}!"))
@@ -167,15 +167,12 @@ class Currency(commands.Cog):
     @commands.command(name="poor", aliases=["delbal", "delbalance", "rembal", "rembalance"])
     async def poor(self, ctx, user: discord.Member, amount: int):
         """Takes a user's global money!"""
-        try:
-            data.remove_global_bal(user_id=user.id, balance=amount)
-            bank, cash, bank_max = self.get_global(user_id=user.id)
-            await ctx.send(**em(content=f"Successfully removed `{amount}` global balance from {user.mention}'s "
-                                        f"account!\nTheir current global balance:\n"
-                                        f"Cash: {round(cash, 2)}\n"
-                                        f"Bank: {round(bank, 2)}/{round(bank_max, 2)}"))
-        except Exception as e:
-            print(e)
+        data.remove_global_bal(user_id=user.id, balance=amount)
+        bank, cash, bank_max = self.get_global(user_id=user.id)
+        await ctx.send(**em(content=f"Successfully removed `{amount}` global balance from {user.mention}'s "
+                                    f"account!\nTheir current global balance:\n"
+                                    f"Cash: {round(cash, 2)}\n"
+                                    f"Bank: {round(bank, 2)}/{round(bank_max, 2)}"))
 
     @commands.command(name="bal", aliases=["currency", "balance"])
     async def balance(self, ctx, user: discord.Member = None):
@@ -194,7 +191,7 @@ class Currency(commands.Cog):
         """Withdraw cash from your bank account!"""
         try:
             amount = int(amount)
-        except ValueError:
+        except ValueError or TypeError:
             if amount is None:
                 await ctx.send(**em(type_="error",
                                     content="You can't withdraw nothing!"))
@@ -224,7 +221,7 @@ class Currency(commands.Cog):
         """Deposit cash in to your bank account!"""
         try:
             amount = int(amount)
-        except ValueError:
+        except ValueError or TypeError:
             if amount is None:
                 await ctx.send(**em(type_="error",
                                     content="You can't deposit nothing!"))
