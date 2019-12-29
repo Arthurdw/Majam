@@ -75,6 +75,7 @@ class DiscordBotsOrgAPI(commands.Cog):
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
         print(data)
+        print(type(data))
 
 
 def setup(bot):

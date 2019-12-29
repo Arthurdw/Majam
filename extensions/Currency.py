@@ -103,7 +103,7 @@ class Currency(commands.Cog):
         """Give some cash coins to a friend!"""
         try:
             amount = int(amount)
-        except ValueError or TypeError:
+        except (ValueError, TypeError):
             if str(amount).lower() != "all":
                 await ctx.send(**em(f"Please specify how much you want to give to {user.mention}!"
                                     "\nOr if you want to send them everything in use \"all\"!"))
@@ -191,7 +191,7 @@ class Currency(commands.Cog):
         """Withdraw cash from your bank account!"""
         try:
             amount = int(amount)
-        except ValueError or TypeError:
+        except (ValueError, TypeError):
             if amount is None:
                 await ctx.send(**em(type_="error",
                                     content="You can't withdraw nothing!"))
@@ -221,7 +221,7 @@ class Currency(commands.Cog):
         """Deposit cash in to your bank account!"""
         try:
             amount = int(amount)
-        except ValueError or TypeError:
+        except (ValueError, TypeError):
             if amount is None:
                 await ctx.send(**em(type_="error",
                                     content="You can't deposit nothing!"))
