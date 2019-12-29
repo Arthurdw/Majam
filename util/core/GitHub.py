@@ -7,13 +7,10 @@ token.read("token.cfg")
 g = Github(token["GIT"]["secret"])
 
 # Select Majam Repo:
-alexi_repo = g.get_repo("Arthurdw/Majam")
+majam_repo = g.get_repo("Arthurdw/Majam")
 
 
 def version():
     """Get the current version (github)"""
-    github_version = 0
-    for _ in alexi_repo.get_commits():
-        github_version += 1
-    _version = str(github_version/1000).replace(".", "")
+    github_version = majam_repo.get_commits().totalCount
     return f"v {str(github_version)[:0] or '0'}.{str(github_version)[:1] or '0'}.{str(github_version)[1:] or '0'}"
