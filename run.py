@@ -22,9 +22,9 @@ class Majam(commands.Bot):
         self.remove_command('help')
         print("\\/\\/\\/\\/\\/ EXTENSIONS \\/\\/\\/\\/\\/")
         for extension in glob.glob("extensions/*.py"):
-            print(extension.replace("extensions\\", "")[:-3] + ": Starting")
-            self.load_extension(extension.replace("\\", ".")[:-3])
-            print(extension.replace("extensions\\", "")[:-3] + ": Ready")
+            print(extension.replace("extensions/", "")[:-3] + ": Starting")
+            self.load_extension(extension.replace("/", ".")[:-3])
+            print(extension.replace("extensions/", "")[:-3] + ": Ready")
         print("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\")
 
     async def on_ready(self):

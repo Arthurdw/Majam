@@ -54,7 +54,7 @@ class Help(commands.Cog):
                 if str(reaction) == "<:DM:659338796550193171>":
                     receiver = ctx.author
                 for extension in glob.glob("extensions/*.py"):
-                    fixed_extension = extension.replace("extensions\\", "")[:-3]
+                    fixed_extension = extension.replace("extensions/", "")[:-3]
                     if fixed_extension != "DBL" and fixed_extension != "Help":
                         cog = self.bot.get_cog(fixed_extension)
                         _commands = cog.get_commands()
