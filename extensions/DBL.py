@@ -23,7 +23,7 @@ class DiscordBotsOrgAPI(commands.Cog):
             await asyncio.sleep(1800)
 
     @commands.command(name="dbl")
-    async def dbl(self, ctx, bot: discord.Member = None):
+    async def dbl(self, ctx, *, bot: discord.Member = None):
         if bot is None:
             await ctx.send(**em(content="Can't lookup nothing if you provide nothing! :/"))
             return
