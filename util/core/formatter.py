@@ -21,7 +21,7 @@ def embed_message(content=None, title=None, type_=None, footer=True,
         if footer_message is None:
             config = configparser.ConfigParser()
             config.read("config.cfg")
-            footer_message = (config["UTILITY"]["default_footer_message"])[1:] + datetime.datetime.now().strftime("%Y")
+            footer_message = (config["UTILITY"]["default_footer_message"])[1:] + ' ' + str(datetime.datetime.now().year)
         embed.set_footer(text=footer_message,
                          icon_url=footer_icon or
                          "https://cdn.discordapp.com/app-icons/634141001769943090/6720b5715d3741482e7a3552fe7106ec.png?"

@@ -3,20 +3,9 @@ import glob
 import asyncio
 from discord.ext import commands
 from util.core import formatter, data
+from util.core.process import exe_walker
 
 em = formatter.embed_message
-
-
-def exe_walker(walk):
-    _walker = [c for c in walk.walk_commands()]
-    checked, sub_const, count = [], [], 0
-    if _walker:
-        for item in _walker:
-            if item.qualified_name not in checked:
-                sub_const.append(item.qualified_name)
-                checked.append(item.qualified_name)
-                count += 1
-        return sub_const, count
 
 
 class Help(commands.Cog):
