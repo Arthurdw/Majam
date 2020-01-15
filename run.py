@@ -1,6 +1,7 @@
 import configparser
 import glob
 import os
+import sys
 from util.core import data, formatter
 from discord.ext import commands
 from util.core import GitHub
@@ -22,9 +23,11 @@ class Majam(commands.Bot):
         self.remove_command('help')
         print("\\/\\/\\/\\/\\/ EXTENSIONS \\/\\/\\/\\/\\/")
         for extension in glob.glob("extensions/*.py"):
-            print(extension.replace("extensions/", "")[:-3] + ": Starting")
-            self.load_extension(extension.replace("/", ".")[:-3])
-            print(extension.replace("extensions/", "")[:-3] + ": Ready")
+            print(extension.replace("extensions\\", "")[:-3] + ": Starting", end='')
+            sys.stdout.flush()
+            self.load_extension(extension.replace("\\", ".")[:-3])
+            print("\r", extension.replace("extensions\\", "")[:-3] + ": Ready      ")
+            sys.stdout.flush()
         print("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\")
 
     async def on_ready(self):
