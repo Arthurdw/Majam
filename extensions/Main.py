@@ -220,8 +220,8 @@ class Main(commands.Cog):
             first = time.perf_counter()
             fn_name = "_eval_expr"
 
-            cmd = cmd.strip("` ")
-
+            cmd = cmd.strip("`")
+            _cmd = "\n".join(cmd.splitlines())
             # add a layer of indentation
             cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
 
@@ -245,11 +245,10 @@ class Main(commands.Cog):
             result = (await eval(f"{fn_name}()", env))
             last = time.perf_counter()
             await ctx.send(**em(title="Eval:",
-                                content=f"**Input:**\n```{cmd}```\n**Output:**```{result}```\nTook "
+                                content=f"**Input:**\n```{_cmd}```\n**Output:**```{result}```\nTook "
                                         f"`{round((last-first)*1000, 2)}ms`!"))
         except Exception as e:
-            await ctx.send(**em(type_="error",
-                                content=e))
+            await ctx.send(**em(type_="error", content=e))
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def prefix(self, ctx):

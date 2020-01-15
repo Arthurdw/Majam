@@ -24,7 +24,7 @@ class Dictionary(commands.Cog):
             sep = "\n\n"
             try: short_def = f"**Short definition:**\n{app.short_definition().capitalize().strip()}"
             except KeyError: short_def = ""
-            try: example = f"**Example:** {app.example().capitalize().strip()}",
+            try: example = f"**Example:**\n{app.example().capitalize().strip()}",
             except KeyError: example = ""
             try: etymologies = f"**Etymologies(s):**\n{app.etymologies().capitalize().strip()}"
             except KeyError: etymologies = ""
@@ -40,8 +40,9 @@ class Dictionary(commands.Cog):
                 audio_file = f"**[AudioFile]({app.audiofile().strip()} \"Audio file spoken in " \
                               f"{app.audiofile_dialect().strip()}\")**"
             except KeyError: audio_file = ""
-            full_def = [f"{app.definition().capitalize().strip()}", str(short_def), str(example), str(etymologies),
-                        str(phonetic), str(sub_def), str(sub_short_def), str(sub_short_example), str(audio_file),
+            full_def = [f"{app.definition().capitalize().strip()}", str(short_def.strip()), str(example[0].strip()),
+                        str(etymologies.strip()), str(phonetic.strip()), str(sub_def.strip()),
+                        str(sub_short_def.strip()), str(sub_short_example.strip()), str(audio_file.strip()),
                         "*Provided by [Oxford dictionary](https://en.wikipedia.org/wiki/Oxford_English_Dictionary "
                         "\"Oxford dictionary\")!\n(using [Pythonary](https://pypi.org/project/pythonary/ "
                         "\"Pythonary PyPi\"))*"]

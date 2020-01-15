@@ -6,7 +6,7 @@ from discord.ext import commands
 from util.core import formatter, data, process
 
 em = formatter.embed_message
-client = DBLMR.Client("232182858251239424-ezzPvjaoqsCBXOuQSYk9plJ6XTlmhQeX")
+client = DBLMR.Client("232182858251239424-5je6Iio0NAfz6fBZRYNy2qR6qt7ifoap")
 
 class DiscordBotsOrgAPI(commands.Cog):
     def __init__(self, bot):
@@ -45,7 +45,7 @@ class DiscordBotsOrgAPI(commands.Cog):
             for bidder in bidders:
                 message.append(f"{counter} | ${bidder.bet} | {bidder.name} (`{bidder.id}`)")
                 if counter >= amount:
-                    leftover = len(client.auctions.bidders) - counter
+                    leftover = len(bidders) - counter
                     if leftover != 0:
                         message.append(str(leftover) + " more...")
                     break
@@ -79,7 +79,7 @@ class DiscordBotsOrgAPI(commands.Cog):
             for bet in bets:
                 message.append(f"{counter} | ${bet.bet} | {bet.slot} | {bet.item} | {bet.name} (`{bet.id}`)")
                 if counter >= amount:
-                    leftover = len(client.auctions.bidders) - counter
+                    leftover = len(bets) - counter
                     if leftover >= 0:
                         message.append(str(leftover) + " more...")
                     break
@@ -102,7 +102,7 @@ class DiscordBotsOrgAPI(commands.Cog):
         if bot is None:
             await ctx.send(**em(title="DBL/DSL stats:",
                                 content=f"Bots: {client.stats.bots}\n"
-                                        f"Servers: {client.stats.servers}"))
+                                        f"Sum of all server counts: {client.stats.servers}"))
             return
         if not bot.bot:
             await ctx.send(**em(content="Ehmm.\nThis **USER** is not listed on DBL...\n\nWait wut, user? Why you want "
@@ -149,7 +149,7 @@ class DiscordBotsOrgAPI(commands.Cog):
                                         f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
                                         f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
                                         f'{notice}\n**Rank:**\n```\nDaily: #{mr_bot.rank.daily}\nMonthly: #'
-                                        f'{mr_bot.rank.monthly}\nAll-Time: {mr_bot.rank.all}\nServers: #'
+                                        f'{mr_bot.rank.monthly}\nAll-Time: #{mr_bot.rank.all}\nServers: #'
                                         f'{mr_bot.rank.servers}\n```\n'
                                         f"**Extra:**\n{extra_string}"))
         except dbl.errors.NotFound:
