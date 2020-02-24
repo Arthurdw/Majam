@@ -136,10 +136,10 @@ class DiscordBotsOrgAPI(commands.Cog):
             for owner in bot_info["owners"]:
                 owner_list.append(f"<@{owner}>")
             owners = owners.join(owner_list)
-            notice = f'Notice: {mr_bot.notice}\n' or ''
+            notice = '' if mr_bot.notice is None else f'Notice: {mr_bot.notice}\n\n'
             await ctx.send(**em(author=(bot.name, f'https://top.gg/bot/{bot.id}', bot.avatar_url),
                                 title="Bot info:",
-                                content=f'**Bot:** {bot_info["username"]}#{bot_info["discriminator"]} *({bot_info["id"]})*\n'
+                                content=f'**Bot:** `{bot_info["username"]}#{bot_info["discriminator"]}` *(`{bot_info["id"]}`)*\n'
                                         f'**Short Description:**\n```{bot_info["shortdesc"]}```\n'
                                         f'**Prefix:** `{bot_info["prefix"]}`\n'
                                         f'**Upvotes:** `{bot_info["monthlyPoints"]}` *(`{bot_info["points"]}`)*,'
@@ -148,7 +148,7 @@ class DiscordBotsOrgAPI(commands.Cog):
                                         f'{bot_info["lib"]}\n**Certified:** '
                                         f'{str(bot_info["certifiedBot"]).replace("True", "Yes").replace("False", "No")}\n'
                                         f'**Added bot on:** {formatter.convert_time(bot_info["date"])}\n\n'
-                                        f'{notice}\n**Rank:**\n```\nDaily: #{mr_bot.rank.daily}\nMonthly: #'
+                                        f'{notice}**Rank:**\n```\nDaily: #{mr_bot.rank.daily}\nMonthly: #'
                                         f'{mr_bot.rank.monthly}\nAll-Time: #{mr_bot.rank.all}\nServers: #'
                                         f'{mr_bot.rank.servers}\n```\n'
                                         f"**Extra:**\n{extra_string}"))
