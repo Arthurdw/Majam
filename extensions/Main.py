@@ -123,34 +123,6 @@ class Main(commands.Cog):
             await ctx.send(**em(content="Successfully updated the version!\n"
                                         f"From `{old_version}` to `{version}`!"))
 
-    @checks.management()
-    @development.command(name="fetch")
-    async def _fetch(self, ctx, database=None):
-        """Fetch all data from a database of choice!"""
-        if database is None:
-            databases = ", "
-            temp_tuple = ()
-            final_tuple = ()
-            for _database in glob.glob("db/*.db"):
-                temp_tuple += _database
-            for db in temp_tuple:
-                final_tuple += ("`" + db.replace("db\\", "")[:-3] + "`",)
-            await ctx.send(**em(content="You forgot your database my friend...\n"
-                                        f"Available databases: {databases}"))
-        else:
-            fetched = data.fetch_all('db/' + database + '.db')
-            _type = type(fetched)
-            sub_type = None
-            for item in fetched:
-                sub_type = type(item)
-                break
-            if len(fetched) > 1900:
-                fetched = str(fetched[1900:]) + '...'
-            await ctx.send(**em(title="Fetch information:",
-                                content=f"Type: `{_type}`\n"
-                                        f"SubType: `{sub_type}\n`"
-                                        f"Fetch: ```\n{fetched}\n```"))
-
     @commands.command(name="say")
     async def say(self, ctx, *, content=None):
         """Embeds a message, you can customize these embeds fully using JSON!"""
