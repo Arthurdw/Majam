@@ -84,6 +84,11 @@ class Gambling(commands.Cog):
             await ctx.send(**em("The minimum bet is 100!"))
             ctx.command.reset_cooldown(ctx)
             return
+        elif bet > data.get_global_bal(ctx.author.id)[0][0]:
+            await ctx.send(**em("You can't bet what you don't have!\n"
+                                f"You have `{round(data.get_global_bal(ctx.author.id)[0][0], 2)}` coins!"))
+            ctx.command.reset_cooldown(ctx)
+            return
         spinning = await ctx.send(**em("Spinning weel!"))
         slot_icons = ("<:Majam:659018214633635843>", "<:DevBot:659019961334890537>",
                       "<:CheekiBreeki:659018436524900383>", "💩", "🤡", "🤑", "💸", "💰", "💳", "💵", "💲")
