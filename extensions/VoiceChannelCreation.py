@@ -28,9 +28,8 @@ class VoiceChannelCreation(commands.Cog):
                 if after.channel.name == config["VOICE"]["join_to_create_name"]:
                     overwrite = discord.PermissionOverwrite()
                     overwrite.create_instant_invite = overwrite.manage_channels = True
-                    overwrite.connect = overwrite.speak = overwrite.mute_members = overwrite.deafen_members = True
+                    overwrite.connect = overwrite.speak = overwrite.manage_roles = True
                     overwrite.move_members = overwrite.priority_speaker = overwrite.stream = True
-                    overwrite.manage_roles = overwrite.manage_webhooks = True
                     channel = await member.guild.create_voice_channel(name=f'{member.name}\'s voice channel!',
                                                                       overwrites=None,
                                                                       category=after.channel.category,
