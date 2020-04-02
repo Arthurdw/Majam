@@ -1,1 +1,1 @@
-W.I.P.
+Feel free to host this bot yourself.
